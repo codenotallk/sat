@@ -12,7 +12,8 @@ if (${SAT_GTK3})
                 ${CMAKE_SOURCE_DIR}/src/sat_gtk3.c
                 ${CMAKE_SOURCE_DIR}/src/sat_gtk3/sat_gtk3_window.c
                 ${CMAKE_SOURCE_DIR}/src/sat_gtk3/sat_gtk3_button.c
-                ${CMAKE_SOURCE_DIR}/src/sat_gtk3/sat_gtk3_label.c)
+                ${CMAKE_SOURCE_DIR}/src/sat_gtk3/sat_gtk3_label.c
+                ${CMAKE_SOURCE_DIR}/src/sat_gtk3/sat_gtk3_box.c)
             
             file (APPEND ${CMAKE_SOURCE_DIR}/include/sat_optionals.h "#include <sat_gtk3.h>\n")
 

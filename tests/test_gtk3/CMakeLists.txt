@@ -11,4 +11,8 @@ if (${SAT_GTK3})
     target_link_libraries (test_sat_gtk3_label PUBLIC sat)
     add_test (NAME test_sat_gtk3_label COMMAND test_sat_gtk3_label)
 
+    add_executable (test_sat_gtk3_box ${CMAKE_CURRENT_LIST_DIR}/test_sat_gtk3_box.c)
+    target_link_libraries (test_sat_gtk3_box PUBLIC sat)
+    add_test (NAME test_sat_gtk3_box COMMAND test_sat_gtk3_box)
+
 endif ()
