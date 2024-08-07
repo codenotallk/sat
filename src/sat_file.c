@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 static char *sat_file_get_mode_by (sat_file_mode_t mode);
 
@@ -77,6 +78,50 @@ uint32_t sat_file_get_size (sat_file_t *object)
     }
 
     return size;
+}
+
+bool sat_file_exists (const char *filename)
+{
+    bool status = false;
+
+    sat_file_t file;
+
+    if (sat_file_open (&file, filename, sat_file_mode_read) == true)
+    {
+        sat_file_close (&file);
+
+        status = true;
+    }
+
+    return status;
+}
+
+bool sat_file_read_to_buffer (const char *filename, void **buffer, uint32_t size)
+{
+    bool status = false;
+
+    sat_file_t file;
+
+    if (buffer != NULL && sat_file_open (&file, filename, sat_file_mode_read) == true)
+    {
+
+        uint32_t __size = sat_file_get_size (&file);
+
+        void *__buffer = calloc (1, __size + 1);
+
+        if (__buffer != NULL)
+        {
+            sat_file_read (&file, __buffer, fmin (size, __size));
+
+            *buffer = __buffer;
+
+            status = true;
+        }
+
+        sat_file_close (&file);
+    }
+
+    return status;
 }
 
 bool sat_file_close (sat_file_t *object)

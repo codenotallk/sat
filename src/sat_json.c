@@ -318,6 +318,7 @@ static sat_status_t sat_json_deserialize_primitives (cJSON *json, sat_json_mappe
 
     else if (mapper->type == sat_json_type_string)
     {
+        memset (mapper->data, 0, mapper->size);
         strncpy (mapper->data, json->valuestring, fmin (strlen (json->valuestring), mapper->size));
         sat_status_set (&status, true, "");
     }
