@@ -2,7 +2,6 @@
 #define SAT_SDL_H_
 
 #include <sat_status.h>
-#include <sat_sdl_types.h>
 #include <sat_sdl_events.h>
 
 typedef struct sat_sdl_t sat_sdl_t;

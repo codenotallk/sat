@@ -5,6 +5,21 @@ This library has the purpose of making it easier to use some resources frequentl
 
 ## Resources
 
+## Compiling
+
+### Enabling a specific module
+```bash
+mkdir build && cd build
+cmake -D<module> ..
+```
+
+### Enabling all
+
+```bash
+mkdir build && cd build
+cmake -DSAT_MYSQL=ON -DSAT_POSTGRES=ON -DSAT_SQLITE=ON -DSAT_KAFKA=ON -DSAT_CURL=ON -DSAT_REDIS=ON -DSAT_WEBSERVER=ON -DSAT_JSON=ON -DSAT_MQTT=ON -DSAT_PROPERTIES=ON -DSAT_SDL=ON -DSAT_GTK3=ON ..
+```
+
 ### Utilities
 * UUID
 * Log

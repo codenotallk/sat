@@ -7,19 +7,6 @@ set (CMAKE_BUILD_TYPE Debug)
 
 include (GNUInstallDirs)
 
-option (SAT_MYSQL "SAT_MYSQL support" OFF)
-option (SAT_POSTGRES "SAT_POSTGRES support" OFF)
-option (SAT_SQLITE "SAT_SQLITE support" OFF)
-option (SAT_KAFKA "SAT_KAFKA support" OFF)
-option (SAT_REDIS "SAT_REDIS support" OFF)
-option (SAT_WEBSERVER "SAT_WEBSERVER support" OFF)
-option (SAT_JSON "SAT_JSON support" OFF)
-option (SAT_CURL "SAT_CURL support" OFF)
-option (SAT_MQTT "SAT_MQTT support" OFF)
-option (SAT_PROPERTIES "SAT_PROPERTIES support" OFF)
-option (SAT_SDL "SAT_SDL support" OFF)
-option (SAT_GTK3 "SAT_GTK3 support" OFF)
-
 enable_testing ()
 
 list (APPEND SAT_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/sat_uuid.c
@@ -55,18 +42,7 @@ file (WRITE ${CMAKE_CURRENT_LIST_DIR}/include/sat_optionals.h "")
 
 list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-include (CMakeMySQLDependency)
-include (CMakePostgresDependency)
-include (CMakeSQLiteDependency)
-include (CMakeKafkaDependency)
-include (CMakeRedisDependency)
-include (CMakeCivetwebDependency)
-include (CMakeJSONDependency)
-include (CMakeCURLDependency)
-include (CMakeMQTTDependency)
-include (CMakeIniDependency)
-include (CMakeSDLDependency)
-include (CMakeGTK3Dependency)
+include ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/LoadModules.txt")
 
 add_library (sat SHARED "")
 target_link_libraries (sat ${SAT_LIBRARIES})
