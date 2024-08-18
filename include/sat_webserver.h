@@ -78,12 +78,19 @@ typedef struct
     sat_array_t *array;
 } sat_webserver_t;
 
+typedef enum
+{
+    sat_webserver_mode_static,
+    sat_webserver_mode_dynamic,
+} sat_webserver_mode_t;
+
 typedef struct 
 {
     char *port;
     char *folder;
     char *threads_amount;
     uint16_t endpoint_amount;
+    sat_webserver_mode_t mode;
 } sat_webserver_args_t;
 
 typedef struct 

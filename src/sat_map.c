@@ -15,27 +15,48 @@ struct sat_map_t
     uint32_t value_size;
     uint32_t list_size;
     sat_array_t *array;
+    sat_map_mode_t mode;
 };
 
-sat_status_t sat_map_create (sat_map_t **object, uint32_t key_size, uint32_t value_size, uint32_t list_size)
-{
-    sat_status_t status = sat_status_set (&status, false, "sat map create error");
+static sat_status_t sat_map_is_args_valid (sat_map_args_t *args);
+static void sat_map_set_context (sat_map_t *object, sat_map_args_t *args);
+static sat_status_t sat_map_buffer_allocate (sat_map_t *object);
 
-    if (object != NULL && key_size > 0 && value_size > 0 && list_size > 0)
+sat_status_t sat_map_create (sat_map_t **object, sat_map_args_t *args)
+{
+    sat_status_t status;
+
+    do
     {
+        status = sat_map_is_args_valid (args);
+        if (sat_status_get_result (&status) == false)
+            break;
+        
+
+        sat_status_set (&status, false, "sat map create error");
+        if (object == NULL)
+            break;
+
         sat_status_set (&status, false, "sat map allocation error");
 
-        *object = calloc (1, sizeof (sat_map_t));
+        sat_map_t *__object = calloc (1, sizeof (sat_map_t));
+        if (__object == NULL)
+            break;
 
-        if (*object != NULL)
+        sat_map_set_context (__object, args);
+
+        status = sat_map_buffer_allocate (__object);
+        if (sat_status_get_result (&status) == false)
         {
-            (*object)->key_size = key_size;
-            (*object)->value_size = value_size;
-            (*object)->list_size = list_size;
-
-            status = sat_array_create (&(*object)->array, list_size, sizeof (sat_map_item_t));
+            free (__object);
+            break;
         }
-    }
+
+        *object = __object;
+
+        sat_status_set (&status, true, "");
+
+    } while (false);
 
     return status;
 }
@@ -176,4 +197,37 @@ sat_status_t sat_map_destroy (sat_map_t *object)
     }
 
     return status;
+}
+
+static sat_status_t sat_map_is_args_valid (sat_map_args_t *args)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat map is args valid error");
+
+    if (args != NULL &&
+        args->key_size > 0 &&
+        args->value_size > 0 &&
+        args->list_size > 0)
+    {
+        sat_status_set (&status, true, "");
+    }
+
+    return status;
+}
+
+static void sat_map_set_context (sat_map_t *object, sat_map_args_t *args)
+{
+    object->key_size = args->key_size;
+    object->value_size = args->value_size;
+    object->list_size = args->list_size;
+    object->mode = args->mode;
+}
+
+static sat_status_t sat_map_buffer_allocate (sat_map_t *object)
+{
+    return sat_array_create (&object->array, &(sat_array_args_t)
+                                             {
+                                                .size = object->list_size,
+                                                .object_size = sizeof (sat_map_item_t),
+                                                .mode = (sat_array_mode_t) object->mode
+                                             });
 }

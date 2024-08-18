@@ -29,7 +29,13 @@ sat_status_t sat_scheduler_open (sat_scheduler_t *object, sat_scheduler_args_t *
     {
         object->events_amount = args->event_amount;
 
-        status = sat_set_create (&object->set, object->events_amount, sizeof (sat_scheduler_event_t), sat_scheduler_is_equal);
+        status = sat_set_create (&object->set, &(sat_set_args_t)
+                                                {
+                                                    .size = object->events_amount,
+                                                    .object_size = sizeof (sat_scheduler_event_t),
+                                                    .is_equal = sat_scheduler_is_equal,
+                                                    .mode = (sat_set_mode_t) args->mode
+                                                });
     }
 
     return status;

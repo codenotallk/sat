@@ -45,7 +45,13 @@ int main (int argc, char *argv[])
 
     sat_set_t *set;
 
-    sat_status_t status = sat_set_create (&set, 3, sizeof (person_t), is_equal);
+    sat_status_t status = sat_set_create (&set, &(sat_set_args_t)
+                                                {
+                                                    .size = 3,
+                                                    .object_size = sizeof (person_t),
+                                                    .is_equal = is_equal,
+                                                    .mode = sat_set_mode_static
+                                                });
     assert (sat_status_get_result (&status) == true);
 
     status = sat_set_add (set, &john);

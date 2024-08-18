@@ -16,9 +16,16 @@ typedef struct
     bool running;
 } sat_scheduler_t;
 
+typedef enum
+{
+    sat_scheduler_mode_static,
+    sat_scheduler_mode_dynamic,
+} sat_scheduler_mode_t;
+
 typedef struct
 {
     uint16_t event_amount;
+    sat_scheduler_mode_t mode;
 } sat_scheduler_args_t;
 
 typedef struct

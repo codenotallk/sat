@@ -143,7 +143,7 @@ static void *send_exit_thread (void *args)
 {
     (void) args;
 
-    sleep (10);
+    sleep (1);
 
     system ("curl http://localhost:1234/exit");
 

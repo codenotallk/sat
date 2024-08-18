@@ -53,7 +53,12 @@ sat_status_t sat_webserver_open (sat_webserver_t *object, sat_webserver_args_t *
         object->folder = args->folder;
         object->threads_amount = args->threads_amount;
 
-        status = sat_array_create (&object->array, args->endpoint_amount, sizeof (sat_webserver_request_t));
+        status = sat_array_create (&object->array, &(sat_array_args_t)
+                                                    {
+                                                        .size = args->endpoint_amount,
+                                                        .object_size = sizeof (sat_webserver_request_t),
+                                                        .mode = (sat_array_mode_t)args->mode,
+                                                    });
 
         sat_status_set (&status, true, "");
     }

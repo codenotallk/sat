@@ -9,34 +9,55 @@ struct sat_set_t
     void *element;
     uint32_t object_size;
     sat_set_is_equal_t is_equal;
+    uint32_t size;
+    sat_set_mode_t mode;
 };
 
-sat_status_t sat_set_create (sat_set_t **object, uint32_t size, uint32_t object_size, sat_set_is_equal_t is_equal)
+static sat_status_t sat_set_is_args_valid (sat_set_args_t *args);
+static void sat_set_set_context (sat_set_t *object, sat_set_args_t *args);
+static sat_status_t sat_set_buffer_allocate (sat_set_t *object);
+
+sat_status_t sat_set_create (sat_set_t **object, sat_set_args_t *args)
 {
-    sat_status_t status = sat_status_set (&status, false, "sat set create error");
+    sat_status_t status;
 
-    if (object != NULL && size > 0 && object_size > 0 && is_equal != NULL)
+    do
     {
-        *object = calloc (1, sizeof (struct sat_set_t));
+        status = sat_set_is_args_valid (args);
+        if (sat_status_get_result (&status) == false)
+            break;
 
-        if (*object != NULL)
+        sat_status_set (&status, false, "sat set create error");
+        if (object == NULL)
+            break;
+        
+        sat_set_t *__object = calloc (1, sizeof (struct sat_set_t));
+        if (__object == NULL)
+            break;
+
+        __object->element = calloc (1, args->object_size);
+        if (__object->element == NULL)
         {
-            (*object)->element = calloc (1, object_size);
-            (*object)->object_size = object_size;
-
-            status = sat_array_create (&(*object)->array, size, object_size);
-            if (sat_status_get_result (&status) == true)
-            {
-                (*object)->is_equal = is_equal;
-            }
-
-            else 
-            {
-                free ((*object)->element);
-                free (*object);
-            }
+            free (__object);
+            break;
         }
-    }
+
+        sat_set_set_context (__object, args);
+
+        status = sat_set_buffer_allocate (__object);
+        if (sat_status_get_result (&status) == false)
+        {
+            free (__object->element);
+            free (__object);
+
+            break;
+        }
+
+        *object = __object;
+
+        sat_status_set (&status, true, "");
+
+    } while (false);
 
     return status;
 }
@@ -146,4 +167,37 @@ sat_status_t sat_set_destroy (sat_set_t *object)
     }
 
     return status;
+}
+
+static sat_status_t sat_set_is_args_valid (sat_set_args_t *args)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat set is args valid error");
+
+    if (args != NULL &&
+        args->size > 0 &&
+        args->object_size > 0 &&
+        args->is_equal != NULL)
+    {
+        sat_status_set (&status, true, "");
+    }
+
+    return status;
+}
+
+static void sat_set_set_context (sat_set_t *object, sat_set_args_t *args)
+{
+    object->object_size = args->object_size;
+    object->is_equal = args->is_equal;
+    object->mode = args->mode;
+    object->size = args->size;
+}
+
+static sat_status_t sat_set_buffer_allocate (sat_set_t *object)
+{
+    return sat_array_create (&object->array, &(sat_array_args_t)
+                                             {
+                                                .size = object->size,
+                                                .object_size = object->object_size,
+                                                .mode = (sat_array_mode_t) object->mode
+                                             });
 }

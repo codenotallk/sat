@@ -21,7 +21,13 @@ int main (int argc, char *argv[])
 
     uint32_t size;
 
-    sat_status_t status = sat_map_create (&map, sizeof (int), sizeof (int), 2);
+    sat_status_t status = sat_map_create (&map, &(sat_map_args_t)
+                                                {
+                                                    .list_size = 2,
+                                                    .key_size = sizeof (int),
+                                                    .value_size = sizeof (int),
+                                                    .mode = sat_map_mode_static
+                                                });
     assert (sat_status_get_result (&status) == true);
 
     status = sat_map_add (map, &(int){1}, &(int){10});
