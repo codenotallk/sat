@@ -17,7 +17,7 @@ if (${SAT_SDL})
     list (APPEND SAT_INCLUDES ${CMAKE_SOURCE_DIR}/include/sat_sdl)
     file (APPEND ${CMAKE_SOURCE_DIR}/include/sat_optionals.h "#include <sat_sdl.h>\n")
 
-    list (APPEND SAT_LIBRARIES SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+    list (APPEND SAT_LIBRARIES SDL2 SDL2_image SDL2_ttf SDL2_mixer SDL2_gfx)
 
     install (FILES include/sat_sdl.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     install (FILES include/sat_sdl/sat_sdl_events.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

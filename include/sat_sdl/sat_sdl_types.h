@@ -41,6 +41,7 @@ typedef struct
     sat_sdl_coordinate_t start;
     sat_sdl_coordinate_t end;
     sat_sdl_color_t color;
+    uint8_t width;
 } sat_sdl_line_t;
 
 typedef struct
@@ -50,5 +51,13 @@ typedef struct
     sat_sdl_color_t color;
     bool fill;
 } sat_sdl_rectangle_t;
+
+typedef struct
+{
+    sat_sdl_coordinate_t coordinate;
+    sat_sdl_color_t color;
+    uint16_t radius;
+    bool fill;
+} sat_sdl_circle_t;
 
 #endif/* SAT_SDL_TYPES_H_ */

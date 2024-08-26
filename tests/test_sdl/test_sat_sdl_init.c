@@ -79,7 +79,49 @@ int main (int argc, char *argv[])
                                         {
                                             .blue = 0xFF,
                                             .alpha = 0xFF
+                                        },
+                                        .width = 10
+                                     });
+                                          
+    assert (sat_status_get_result (&status) == true);
+
+    status = sat_sdl_draw_circle (sdl, (sat_sdl_circle_t)
+                                     {
+                                        .coordinate = 
+                                        {
+                                            .x = SAT_SDL_SCREEN_WIDTH / 2,
+                                            .y = SAT_SDL_SCREEN_HEIGHT / 2,
+    
+                                        },
+                                        .radius = SAT_SDL_SCREEN_HEIGHT / 4,
+                                        .color = 
+                                        {
+                                            .red = 0x00,
+                                            .green = 0x00,
+                                            .blue = 0x00,
+                                            .alpha = 0xFF
                                         }
+                                     });
+                                          
+    assert (sat_status_get_result (&status) == true);
+
+    status = sat_sdl_draw_circle (sdl, (sat_sdl_circle_t)
+                                     {
+                                        .coordinate = 
+                                        {
+                                            .x = SAT_SDL_SCREEN_WIDTH / 2,
+                                            .y = SAT_SDL_SCREEN_HEIGHT / 2,
+    
+                                        },
+                                        .radius = SAT_SDL_SCREEN_HEIGHT / 8,
+                                        .color = 
+                                        {
+                                            .red = 0x00,
+                                            .green = 0x00,
+                                            .blue = 0x00,
+                                            .alpha = 0xFF
+                                        },
+                                        .fill = true,
                                      });
                                           
     assert (sat_status_get_result (&status) == true);

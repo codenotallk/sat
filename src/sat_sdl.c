@@ -341,6 +341,20 @@ sat_status_t sat_sdl_draw_rectangle (sat_sdl_t *object, sat_sdl_rectangle_t rect
     return status; 
 }
 
+sat_status_t sat_sdl_draw_circle (sat_sdl_t *object, sat_sdl_circle_t circle)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl draw circle error");
+
+    if (object != NULL && object->initialized == true)
+    {
+        sat_sdl_geometry_draw_circle (&object->render, circle);
+
+        sat_status_set (&status, true, "");
+    }
+
+    return status; 
+}
+
 sat_status_t sat_sdl_draw (sat_sdl_t *object)
 {
     sat_status_t status = sat_status_set (&status, false, "sat sdl draw error");
