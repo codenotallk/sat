@@ -44,6 +44,15 @@ static void load_image (sat_sdl_t *sdl, char *name, char *path, char *filename)
     assert (sat_status_get_result (&status) == true);
 }
 
+static void load_audio (sat_sdl_t *sdl, char *name, char *path, char *filename, sat_sdl_audio_type_t type)
+{
+    char buffer [1024] = {0};
+    snprintf (buffer, 1024 - 1, "%s/%s", path, filename);
+
+    sat_status_t status = sat_sdl_audio_add (sdl, buffer, name, type);
+    assert (sat_status_get_result (&status) == true);
+}
+
 static void sat_sdl_event_on_key_pressed (void *object, sat_sdl_key_t key)
 {
     sat_sdl_t *sdl = (sat_sdl_t *)object;
@@ -58,6 +67,8 @@ static void sat_sdl_event_on_key_pressed (void *object, sat_sdl_key_t key)
             sat_sdl_set_image (sdl, is_pressed [i].command, rectangle);
             is_pressed [i].pressed = true;
             sat_sdl_draw (sdl);
+            sat_status_t status = sat_sdl_audio_control (sdl, "hit", sat_sdl_audio_control_play);
+            assert (sat_status_get_result (&status) == true);
         }
     }
 
@@ -88,6 +99,12 @@ int main (int argc, char *argv[])
     load_image (sdl, "right",  argv[1], "right.png");
     load_image (sdl, "down",   argv[1], "down.png");
     load_image (sdl, "up",     argv[1], "up.png");
+
+    load_audio (sdl, "hit", argv [1], "hit_the_ground.wav", sat_sdl_audio_type_fx);
+    load_audio (sdl, "game_over", argv [1], "game_over.mp3", sat_sdl_audio_type_music);
+
+    status = sat_sdl_audio_control (sdl, "game_over", sat_sdl_audio_control_play);
+    assert (sat_status_get_result (&status) == true);
 
     status = sat_sdl_set_image (sdl, "center", rectangle);
     assert (sat_status_get_result (&status) == true);

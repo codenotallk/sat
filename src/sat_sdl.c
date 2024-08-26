@@ -8,11 +8,14 @@
 #include <sat_sdl_geometry.h>
 #include <sat_sdl_mouse.h>
 #include <sat_sdl_font.h>
+#include <sat_sdl_sound.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 #define SAT_SDL_TEXTURES_SIZE     20
 #define SAT_SDL_FONTS_AMOUNT      20
+#define SAT_SDL_SOUND_AMOUNT      20
 
 struct sat_sdl_t
 {
@@ -40,6 +43,12 @@ struct sat_sdl_t
         sat_sdl_font_t list [SAT_SDL_FONTS_AMOUNT];
         uint8_t amount;
     } fonts;
+
+    struct
+    {
+        sat_sdl_sound_t list [SAT_SDL_SOUND_AMOUNT];
+        uint8_t amount;
+    } sounds;
 
     void *context;
 };
@@ -436,11 +445,82 @@ sat_status_t sat_sdl_close (sat_sdl_t *object)
             sat_sdl_texture_destroy (&object->textures.list [i]);
         }
 
+        for (uint8_t i = 0; i < object->sounds.amount; i++)
+        {
+            sat_sdl_sound_destroy (&object->sounds.list [i]);
+        }
+
         free (object);
 
         sat_sdl_close_api ();
 
         sat_status_set (&status, true, "");
+    }
+
+    return status;
+}
+
+sat_status_t sat_sdl_audio_add (sat_sdl_t *object, char *filename, char *name, sat_sdl_audio_type_t type)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl audio add error");
+
+    if (object != NULL && object->initialized == true && name != NULL && filename != NULL && object->sounds.amount < SAT_SDL_SOUND_AMOUNT)
+    {
+        sat_sdl_sound_t sound;
+
+        status = sat_sdl_sound_load (&sound, filename, name, type);
+
+        if (sat_status_get_result (&status) == true)
+        {
+            memcpy (&object->sounds.list [object->sounds.amount], &sound, sizeof (sat_sdl_sound_t));
+
+            object->sounds.amount ++;
+        }
+    }
+
+    return status;
+}
+
+sat_status_t sat_sdl_audio_control (sat_sdl_t *object, char *name, sat_sdl_audio_control_t control)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl audio control error");
+
+    if (object != NULL && object->initialized == true && name != NULL)
+    {
+        for (uint8_t i = 0; i < object->sounds.amount; i++)
+        {
+            sat_sdl_sound_t *sound = &object->sounds.list [i];
+
+            if (strcmp (sound->name, name) == 0)
+            {
+                switch (control)
+                {
+                    case sat_sdl_audio_control_play:
+
+                    if (sound->type == sat_sdl_audio_type_fx)
+                        sat_sdl_sound_fx_play (sound);
+                    
+                    else 
+                        sat_sdl_sound_music_play (sound);
+
+                    break;
+
+                    case sat_sdl_audio_control_stop:
+                        sat_sdl_sound_music_stop (sound);
+                    break;
+
+                    case sat_sdl_audio_control_pause:
+                        sat_sdl_sound_music_pause (sound);
+                    break;
+
+                    case sat_sdl_audio_control_resume:
+                        sat_sdl_sound_music_resume (sound);
+                    break;
+                }
+
+                sat_status_set (&status, true, "");
+            }
+        }
     }
 
     return status;
@@ -454,7 +534,8 @@ static sat_status_t sat_sdl_init_api (void)
 
     if (SDL_Init (SDL_INIT_EVERYTHING) >= 0 &&
         (IMG_Init (image_flag) & image_flag) != 0 &&
-        TTF_Init () >= 0)
+        TTF_Init () >= 0 && 
+        Mix_OpenAudio (44100, MIX_DEFAULT_FORMAT, 2, 2048) >= 0)
     {
         sat_status_set (&status, true, "");
     }
@@ -466,5 +547,6 @@ static void sat_sdl_close_api (void)
 {
     TTF_Quit ();
     IMG_Quit ();
+    Mix_Quit ();
     SDL_Quit ();
 }

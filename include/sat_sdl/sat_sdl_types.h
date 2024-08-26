@@ -60,4 +60,19 @@ typedef struct
     bool fill;
 } sat_sdl_circle_t;
 
+typedef enum 
+{
+    sat_sdl_audio_type_music,
+    sat_sdl_audio_type_fx,
+} sat_sdl_audio_type_t;
+
+typedef enum 
+{
+    sat_sdl_audio_control_play,
+    sat_sdl_audio_control_pause,
+    sat_sdl_audio_control_stop,
+    sat_sdl_audio_control_resume
+} sat_sdl_audio_control_t;
+
+
 #endif/* SAT_SDL_TYPES_H_ */
