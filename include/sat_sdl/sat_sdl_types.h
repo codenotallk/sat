@@ -74,5 +74,22 @@ typedef enum
     sat_sdl_audio_control_resume
 } sat_sdl_audio_control_t;
 
+typedef enum 
+{
+  sat_sdl_background_orientation_vertical,
+  sat_sdl_background_orientation_horizontal  
+} sat_sdl_background_orientation_t;
+
+typedef enum 
+{
+    sat_sdl_animate_type_background,
+} sat_sdl_animate_type_t;
+
+typedef struct 
+{
+    sat_sdl_animate_type_t type;
+    sat_sdl_image_type_t image_type;
+    sat_sdl_background_orientation_t orientation;
+} sat_sdl_animate_properties_t;
 
 #endif/* SAT_SDL_TYPES_H_ */

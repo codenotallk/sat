@@ -28,4 +28,7 @@ sat_status_t sat_sdl_close (sat_sdl_t *object);
 sat_status_t sat_sdl_audio_add (sat_sdl_t *object, char *filename, char *name, sat_sdl_audio_type_t type);
 sat_status_t sat_sdl_audio_control (sat_sdl_t *object, char *name, sat_sdl_audio_control_t control);
 
+sat_status_t sat_sdl_animate_add (sat_sdl_t *object, char *filename, char *name, sat_sdl_animate_properties_t properties);
+sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name);
+
 #endif/* SAT_SDL_H_ */

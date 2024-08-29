@@ -13,7 +13,8 @@ if (${SAT_SDL})
                              ${CMAKE_SOURCE_DIR}/src/sat_sdl/sat_sdl_geometry.c
                              ${CMAKE_SOURCE_DIR}/src/sat_sdl/sat_sdl_mouse.c
                              ${CMAKE_SOURCE_DIR}/src/sat_sdl/sat_sdl_font.c
-                             ${CMAKE_SOURCE_DIR}/src/sat_sdl/sat_sdl_sound.c)
+                             ${CMAKE_SOURCE_DIR}/src/sat_sdl/sat_sdl_sound.c
+                             ${CMAKE_SOURCE_DIR}/src/sat_sdl/sat_sdl_animate.c)
 
     list (APPEND SAT_INCLUDES ${CMAKE_SOURCE_DIR}/include/sat_sdl)
     file (APPEND ${CMAKE_SOURCE_DIR}/include/sat_optionals.h "#include <sat_sdl.h>\n")

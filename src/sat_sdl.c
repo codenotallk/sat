@@ -9,6 +9,7 @@
 #include <sat_sdl_mouse.h>
 #include <sat_sdl_font.h>
 #include <sat_sdl_sound.h>
+#include <sat_sdl_animate.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
@@ -16,6 +17,7 @@
 #define SAT_SDL_TEXTURES_SIZE     20
 #define SAT_SDL_FONTS_AMOUNT      20
 #define SAT_SDL_SOUND_AMOUNT      20
+#define SAT_SDL_ANIMATE_AMOUNT    20
 
 struct sat_sdl_t
 {
@@ -49,6 +51,12 @@ struct sat_sdl_t
         sat_sdl_sound_t list [SAT_SDL_SOUND_AMOUNT];
         uint8_t amount;
     } sounds;
+
+    struct 
+    {
+        sat_sdl_animate_t list [SAT_SDL_ANIMATE_AMOUNT];
+        uint8_t amount;
+    } animates;
 
     void *context;
 };
@@ -519,6 +527,102 @@ sat_status_t sat_sdl_audio_control (sat_sdl_t *object, char *name, sat_sdl_audio
                 }
 
                 sat_status_set (&status, true, "");
+            }
+        }
+    }
+
+    return status;
+}
+
+sat_status_t sat_sdl_animate_add (sat_sdl_t *object, char *filename, char *name, sat_sdl_animate_properties_t properties)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl animate add error");
+
+    if (object != NULL && object->initialized == true && name != NULL && filename != NULL && object->animates.amount < SAT_SDL_ANIMATE_AMOUNT)
+    {
+        sat_sdl_image_t image = 
+        {
+            .type = properties.image_type
+        };
+
+        status = sat_sdl_image_load (&image, filename);
+
+        if (sat_status_get_result (&status) == true)
+        {
+            sat_sdl_animate_t animate = 
+            {
+                .offset = 0,
+                .orientation = properties.orientation,
+                .type = properties.type,
+                .texture.name = name
+            };
+
+            sat_sdl_animate_load (&animate, &object->render, &image);
+
+            memcpy (&object->animates.list [object->animates.amount], &animate, sizeof (sat_sdl_animate_t));
+
+            sat_sdl_image_unload (&image);
+
+            object->animates.amount ++;
+        }
+    }
+
+    return status;
+}
+
+sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl set image error");
+
+    if (object != NULL && object->initialized == true && name != NULL)
+    {
+        for (uint8_t i = 0; i < object->animates.amount; i++)
+        {
+            sat_sdl_animate_t *animate = &object->animates.list [i];
+
+            if (strcmp (animate->texture.name, name) == 0)
+            {
+                if (animate->type == sat_sdl_animate_type_background)
+                {
+                    sat_sdl_rectangle_t rectangle = 
+                    {
+                        .dimension = 
+                        {
+                            .height = object->height,
+                            .width = object->width
+                        }
+                    };
+
+                    if (animate->orientation == sat_sdl_background_orientation_horizontal)
+                    {
+                        if (-- animate->offset < -object->width)
+                            animate->offset = 0;
+
+                        rectangle.coordinate.x = animate->offset;
+                        sat_sdl_render_set_texture (&object->render, animate->texture.handle, rectangle);
+
+                        rectangle.coordinate.x = animate->offset + object->width;
+                        sat_sdl_render_set_texture (&object->render, animate->texture.handle, rectangle);
+
+                    }
+
+                    else
+                    {
+                        if (-- animate->offset > -object->height)
+                            animate->offset = 0;
+
+                        rectangle.coordinate.y = animate->offset;
+                        sat_sdl_render_set_texture (&object->render, animate->texture.handle, rectangle);
+
+                        rectangle.coordinate.y = animate->offset + object->height;
+                        sat_sdl_render_set_texture (&object->render, animate->texture.handle, rectangle);
+
+                    }
+                }
+
+                sat_status_set (&status, true, "");
+
+                break;
             }
         }
     }
