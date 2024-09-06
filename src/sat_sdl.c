@@ -393,33 +393,35 @@ sat_status_t sat_sdl_run (sat_sdl_t *object)
 
     if (object != NULL && object->initialized == true)
     {
-        while (object->running == true)
+        sat_status_set (&status, true, "");
+        
+        while (SDL_PollEvent (&event))
         {
-            while (SDL_PollEvent (&event))
+            if (event.type == SDL_QUIT)
             {
-                if (event.type == SDL_QUIT)
-                    object->running = false;
+                sat_status_set (&status, false, "");
+                break;
+            }
 
-                else if (event.type == SDL_KEYDOWN && object->events.on_key_pressed != NULL)
-                {
-                    object->events.on_key_pressed (object->context,
-                                                    sat_sdl_key_get_by (event.key.keysym.sym));
-                }
+            else if (event.type == SDL_KEYDOWN && object->events.on_key_pressed != NULL)
+            {
+                object->events.on_key_pressed (object->context,
+                                                sat_sdl_key_get_by (event.key.keysym.sym));
+            }
 
-                else if ((event.type == SDL_MOUSEMOTION     ||
-                          event.type == SDL_MOUSEBUTTONDOWN ||
-                          event.type == SDL_MOUSEBUTTONUP)  &&
-                          object->events.on_mouse_event != NULL)
-                {
-                    sat_sdl_coordinate_t coordinate;
-                    SDL_GetMouseState (&coordinate.x, &coordinate.y);
+            else if ((event.type == SDL_MOUSEMOTION     ||
+                        event.type == SDL_MOUSEBUTTONDOWN ||
+                        event.type == SDL_MOUSEBUTTONUP)  &&
+                        object->events.on_mouse_event != NULL)
+            {
+                sat_sdl_coordinate_t coordinate;
+                SDL_GetMouseState (&coordinate.x, &coordinate.y);
 
-                    object->events.on_mouse_event (object->context, sat_sdl_mouse_event_get_type (event.type), coordinate);
-                }
+                object->events.on_mouse_event (object->context, 
+                                               sat_sdl_mouse_event_get_type (event.type),
+                                               coordinate);
             }
         }
-
-        sat_status_set (&status, true, "");
     }
 
     return status;
@@ -554,7 +556,8 @@ sat_status_t sat_sdl_animate_add (sat_sdl_t *object, char *filename, char *name,
                 .offset = 0,
                 .orientation = properties.orientation,
                 .type = properties.type,
-                .texture.name = name
+                .texture.name = name,
+                .dimension = properties.sprites.dimension,
             };
 
             sat_sdl_animate_load (&animate, &object->render, &image);
@@ -570,9 +573,31 @@ sat_status_t sat_sdl_animate_add (sat_sdl_t *object, char *filename, char *name,
     return status;
 }
 
-sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name)
+sat_status_t sat_sdl_animate_add_states (sat_sdl_t *object, char *name, char *state, sat_sdl_frame_position_t *positions, uint8_t size)
 {
-    sat_status_t status = sat_status_set (&status, false, "sat sdl set image error");
+    sat_status_t status = sat_status_set (&status, false, "sat sdl animate add states error");
+
+    if (object != NULL && object->initialized == true && name != NULL && state != NULL && positions != NULL && size > 0)
+    {
+        for (uint8_t i = 0; i < object->animates.amount; i++)
+        {
+            sat_sdl_animate_t *animate = &object->animates.list [i];
+            
+            if (strcmp (animate->texture.name, name) == 0 && animate->type == sat_sdl_animate_type_sprite)
+            {
+                status = sat_sdl_animate_add_state (animate, state, positions, size);
+
+                break;
+            }
+        }
+    }
+
+    return status;
+}
+
+sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name, char *state, sat_sdl_coordinate_t coordinate)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl animate draw error");
 
     if (object != NULL && object->initialized == true && name != NULL)
     {
@@ -618,6 +643,20 @@ sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name)
                         sat_sdl_render_set_texture (&object->render, animate->texture.handle, rectangle);
 
                     }
+                }
+
+                else 
+                {
+                    sat_sdl_rectangle_t *rectangle;
+
+                    sat_sdl_animate_get_frame (animate, state, animate->offset, &rectangle);
+
+                    sat_sdl_render_set_texture_xy (&object->render, animate->texture.handle, *rectangle, coordinate);
+
+                    animate->offset ++;
+
+                    if (animate->offset == animate->frames.amount)
+                        animate->offset = 0;
                 }
 
                 sat_status_set (&status, true, "");

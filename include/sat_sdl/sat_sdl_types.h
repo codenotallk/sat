@@ -83,6 +83,7 @@ typedef enum
 typedef enum 
 {
     sat_sdl_animate_type_background,
+    sat_sdl_animate_type_sprite,
 } sat_sdl_animate_type_t;
 
 typedef struct 
@@ -90,6 +91,19 @@ typedef struct
     sat_sdl_animate_type_t type;
     sat_sdl_image_type_t image_type;
     sat_sdl_background_orientation_t orientation;
+
+    struct 
+    {
+        sat_sdl_dimension_t dimension;
+    } sprites;
+
 } sat_sdl_animate_properties_t;
+
+typedef struct 
+{
+    uint8_t row;
+    uint8_t column;
+
+} sat_sdl_frame_position_t;
 
 #endif/* SAT_SDL_TYPES_H_ */

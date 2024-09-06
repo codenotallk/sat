@@ -34,6 +34,27 @@ void sat_sdl_render_set_texture (sat_sdl_render_t *object, SDL_Texture *texture,
     SDL_RenderCopyEx (object->render, texture, NULL, &__rectangle, 0, NULL, SDL_FLIP_NONE);
 }
 
+void sat_sdl_render_set_texture_xy (sat_sdl_render_t *object, SDL_Texture *texture, sat_sdl_rectangle_t rectangle, sat_sdl_coordinate_t coordinate)
+{
+    SDL_Rect __rectangle_texture = 
+    {
+        .x = rectangle.coordinate.x,
+        .y = rectangle.coordinate.y,
+        .w = rectangle.dimension.width,
+        .h = rectangle.dimension.height,
+    };
+
+    SDL_Rect __rectangle_position = 
+    {
+        .x = coordinate.x,
+        .y = coordinate.y,
+        .w = rectangle.dimension.width,
+        .h = rectangle.dimension.height,
+    };
+
+    SDL_RenderCopyEx (object->render, texture, &__rectangle_texture, &__rectangle_position, 0, NULL, SDL_FLIP_NONE);
+}
+
 void sat_sdl_render_set_viewport (sat_sdl_render_t *object, sat_sdl_rectangle_t rectangle)
 {
     SDL_Rect __rectangle = 
