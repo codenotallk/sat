@@ -22,7 +22,7 @@ sat_status_t sat_sdl_draw_line (sat_sdl_t *object, sat_sdl_line_t line);
 sat_status_t sat_sdl_draw_rectangle (sat_sdl_t *object, sat_sdl_rectangle_t rectangle);
 sat_status_t sat_sdl_draw_circle (sat_sdl_t *object, sat_sdl_circle_t circle);
 sat_status_t sat_sdl_draw (sat_sdl_t *object);
-sat_status_t sat_sdl_run (sat_sdl_t *object);
+sat_status_t sat_sdl_scan_events (sat_sdl_t *object);
 sat_status_t sat_sdl_stop (sat_sdl_t *object);
 sat_status_t sat_sdl_close (sat_sdl_t *object);
 sat_status_t sat_sdl_audio_add (sat_sdl_t *object, char *filename, char *name, sat_sdl_audio_type_t type);

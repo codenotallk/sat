@@ -386,9 +386,9 @@ sat_status_t sat_sdl_draw (sat_sdl_t *object)
     return status;    
 }
 
-sat_status_t sat_sdl_run (sat_sdl_t *object)
+sat_status_t sat_sdl_scan_events (sat_sdl_t *object)
 {
-    sat_status_t status = sat_status_set (&status, false, "sat sdl run error");
+    sat_status_t status = sat_status_set (&status, false, "sat sdl scan events error");
     SDL_Event event;
 
     if (object != NULL && object->initialized == true)
@@ -397,16 +397,18 @@ sat_status_t sat_sdl_run (sat_sdl_t *object)
         
         while (SDL_PollEvent (&event))
         {
-            if (event.type == SDL_QUIT)
+            if (event.type == SDL_QUIT || object->running == false)
             {
                 sat_status_set (&status, false, "");
                 break;
             }
 
-            else if (event.type == SDL_KEYDOWN && object->events.on_key_pressed != NULL)
+            const Uint8 *key_state = SDL_GetKeyboardState (NULL);
+
+            if (object->events.on_key_pressed != NULL)
             {
                 object->events.on_key_pressed (object->context,
-                                                sat_sdl_key_get_by (event.key.keysym.sym));
+                                                sat_sdl_key_get_by (key_state));
             }
 
             else if ((event.type == SDL_MOUSEMOTION     ||

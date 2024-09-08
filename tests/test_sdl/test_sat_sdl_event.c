@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define SAT_SDL_SCREEN_WIDTH        640
 #define SAT_SDL_SCREEN_HEIGHT       480
@@ -57,20 +58,24 @@ static void sat_sdl_event_on_key_pressed (void *object, sat_sdl_key_t key)
 {
     sat_sdl_t *sdl = (sat_sdl_t *)object;
 
-    printf ("Key Pressed: %d\n", key);
+    char *command = "center";
 
     for (int i = 0; i < 4; i++)
     {
         if (is_pressed [i].key == key)
         {
-            sat_sdl_clear (sdl);
-            sat_sdl_set_image (sdl, is_pressed [i].command, rectangle);
+            printf ("Key Pressed: %d\n", key);
+            command = is_pressed [i].command;            
             is_pressed [i].pressed = true;
-            sat_sdl_draw (sdl);
+            
             sat_status_t status = sat_sdl_audio_control (sdl, "hit", sat_sdl_audio_control_play);
             assert (sat_status_get_result (&status) == true);
         }
     }
+
+    sat_sdl_clear (sdl);
+    sat_sdl_set_image (sdl, command, rectangle);
+    sat_sdl_draw (sdl);
 
     if (is_pressed [0].pressed == true &&
         is_pressed [1].pressed == true &&
@@ -109,11 +114,15 @@ int main (int argc, char *argv[])
     status = sat_sdl_set_image (sdl, "center", rectangle);
     assert (sat_status_get_result (&status) == true);
 
-    status = sat_sdl_draw (sdl);
-    assert (sat_status_get_result (&status) == true);
+    do 
+    {
+        status = sat_sdl_draw (sdl);
+        assert (sat_status_get_result (&status) == true);
 
-    status = sat_sdl_run (sdl);
-    assert (sat_status_get_result (&status) == true);
+        status = sat_sdl_scan_events (sdl);
+
+        usleep (100000);
+    } while (sat_status_get_result (&status) == true);
 
     status = sat_sdl_close (sdl);
     assert (sat_status_get_result (&status) == true);

@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define SAT_SDL_SCREEN_WIDTH        640
 #define SAT_SDL_SCREEN_HEIGHT       480
@@ -137,11 +138,15 @@ int main (int argc, char *argv[])
                                     .y = 0,
                                  });
 
-    status = sat_sdl_draw (sdl);
-    assert (sat_status_get_result (&status) == true);
+    do 
+    {
+        status = sat_sdl_draw (sdl);
+        assert (sat_status_get_result (&status) == true);
 
-    status = sat_sdl_run (sdl);
-    assert (sat_status_get_result (&status) == true);
+        status = sat_sdl_scan_events (sdl);
+
+        usleep (100000);
+    } while (sat_status_get_result (&status) == true);
 
     status = sat_sdl_close (sdl);
     assert (sat_status_get_result (&status) == true);

@@ -53,6 +53,9 @@ int main (int argc, char *argv[])
 
     do 
     {
+        status = sat_sdl_clear (sdl);
+        assert (sat_status_get_result (&status) == true);
+
         status = sat_sdl_animate_draw (sdl, "background", NULL, (sat_sdl_coordinate_t){});
         assert (sat_status_get_result (&status) == true);
 
@@ -62,7 +65,7 @@ int main (int argc, char *argv[])
         status = sat_sdl_draw (sdl);
         assert (sat_status_get_result (&status) == true);
 
-        status = sat_sdl_run (sdl);
+        status = sat_sdl_scan_events (sdl);
 
         usleep (100000);
     } while (sat_status_get_result (&status) == true);
