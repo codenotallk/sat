@@ -106,4 +106,11 @@ typedef struct
 
 } sat_sdl_frame_position_t;
 
+typedef enum 
+{
+    sat_sdl_flip_none,
+    sat_sdl_flip_horizontal,
+    sat_sdl_flip_vertical,
+} sat_sdl_flip_t;
+
 #endif/* SAT_SDL_TYPES_H_ */

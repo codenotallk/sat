@@ -394,6 +394,14 @@ sat_status_t sat_sdl_scan_events (sat_sdl_t *object)
     if (object != NULL && object->initialized == true)
     {
         sat_status_set (&status, true, "");
+
+        const Uint8 *key_state = SDL_GetKeyboardState (NULL);
+
+        if (object->events.on_key_pressed != NULL)
+        {
+            object->events.on_key_pressed (object->context,
+                                            sat_sdl_key_get_by (key_state));
+        }
         
         while (SDL_PollEvent (&event))
         {
@@ -401,14 +409,6 @@ sat_status_t sat_sdl_scan_events (sat_sdl_t *object)
             {
                 sat_status_set (&status, false, "");
                 break;
-            }
-
-            const Uint8 *key_state = SDL_GetKeyboardState (NULL);
-
-            if (object->events.on_key_pressed != NULL)
-            {
-                object->events.on_key_pressed (object->context,
-                                                sat_sdl_key_get_by (key_state));
             }
 
             else if ((event.type == SDL_MOUSEMOTION     ||
@@ -597,7 +597,7 @@ sat_status_t sat_sdl_animate_add_states (sat_sdl_t *object, char *name, char *st
     return status;
 }
 
-sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name, char *state, sat_sdl_coordinate_t coordinate)
+sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name, char *state, sat_sdl_coordinate_t coordinate, sat_sdl_flip_t flip)
 {
     sat_status_t status = sat_status_set (&status, false, "sat sdl animate draw error");
 
@@ -653,11 +653,11 @@ sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name, char *state, s
 
                     sat_sdl_animate_get_frame (animate, state, animate->offset, &rectangle);
 
-                    sat_sdl_render_set_texture_xy (&object->render, animate->texture.handle, *rectangle, coordinate);
+                    sat_sdl_render_set_texture_xy (&object->render, animate->texture.handle, *rectangle, coordinate, flip);
 
                     animate->offset ++;
 
-                    if (animate->offset == animate->frames.amount)
+                    if (animate->offset >= animate->frames.amount)
                         animate->offset = 0;
                 }
 

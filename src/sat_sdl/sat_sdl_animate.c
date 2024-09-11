@@ -28,9 +28,9 @@ sat_status_t sat_sdl_animate_add_state (sat_sdl_animate_t *object, char *state, 
                 frame->rectangles [i].coordinate.y = positions [i].row * object->dimension.height;
                 frame->rectangles [i].dimension.height = object->dimension.height;
                 frame->rectangles [i].dimension.width = object->dimension.width;
-
-                object->frames.amount ++;
             }
+
+            object->frames.amount ++;
 
             sat_status_set (&status, true, "");
         }

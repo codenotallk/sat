@@ -31,6 +31,6 @@ sat_status_t sat_sdl_audio_control (sat_sdl_t *object, char *name, sat_sdl_audio
 sat_status_t sat_sdl_animate_add (sat_sdl_t *object, char *filename, char *name, sat_sdl_animate_properties_t properties);
 sat_status_t sat_sdl_animate_add_states (sat_sdl_t *object, char *name, char *state, sat_sdl_frame_position_t *positions, uint8_t size);
 
-sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name, char *state, sat_sdl_coordinate_t coordinate);
+sat_status_t sat_sdl_animate_draw (sat_sdl_t *object, char *name, char *state, sat_sdl_coordinate_t coordinate, sat_sdl_flip_t flip);
 
 #endif/* SAT_SDL_H_ */
