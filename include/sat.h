@@ -21,6 +21,7 @@
 #include <sat_cache.h>
 #include <sat_scheduler.h>
 #include <sat_channel.h>
+#include <sat_shared_memory.h>
 
 #include <sat_optionals.h>
 

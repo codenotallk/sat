@@ -78,6 +78,10 @@ add_executable (test_sat_channel ${CMAKE_CURRENT_LIST_DIR}/test_sat_channel.c)
 target_link_libraries (test_sat_channel PUBLIC sat)
 add_test (NAME test_sat_channel COMMAND test_sat_channel)
 
+add_executable (test_sat_shared_memory ${CMAKE_CURRENT_LIST_DIR}/test_sat_shared_memory.c)
+target_link_libraries (test_sat_shared_memory PUBLIC sat)
+add_test (NAME test_sat_shared_memory COMMAND test_sat_shared_memory)
+
 add_subdirectory (test_mysql)
 add_subdirectory (test_postgres)
 add_subdirectory (test_sqlite)
