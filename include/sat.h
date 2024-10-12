@@ -22,6 +22,7 @@
 #include <sat_scheduler.h>
 #include <sat_channel.h>
 #include <sat_shared_memory.h>
+#include <sat_queue_ipc.h>
 
 #include <sat_optionals.h>
 

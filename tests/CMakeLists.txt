@@ -82,6 +82,10 @@ add_executable (test_sat_shared_memory ${CMAKE_CURRENT_LIST_DIR}/test_sat_shared
 target_link_libraries (test_sat_shared_memory PUBLIC sat)
 add_test (NAME test_sat_shared_memory COMMAND test_sat_shared_memory)
 
+add_executable (test_sat_queue_ipc ${CMAKE_CURRENT_LIST_DIR}/test_sat_queue_ipc.c)
+target_link_libraries (test_sat_queue_ipc PUBLIC sat)
+add_test (NAME test_sat_queue_ipc COMMAND test_sat_queue_ipc)
+
 add_subdirectory (test_mysql)
 add_subdirectory (test_postgres)
 add_subdirectory (test_sqlite)
