@@ -1,9 +1,11 @@
 #include <sat_array.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sat_iterator.h>
 
 struct sat_array_t 
 {
+    sat_iterator_base_t base;
     uint32_t amount;
     uint32_t object_size;
     uint32_t size;
@@ -11,6 +13,9 @@ struct sat_array_t
     bool initialized;
     sat_array_mode_t mode;
 };
+
+static void *sat_array_next (void *object, uint32_t index);
+static uint32_t sat_array_get_amount (void *object);
 
 static bool sat_array_is_initialized (sat_array_t *object);
 static sat_status_t sat_array_is_args_valid (sat_array_args_t *args);
@@ -51,6 +56,9 @@ sat_status_t sat_array_create (sat_array_t **object, sat_array_args_t *args)
             break;
         }
 
+        __object->base.object = __object;
+        __object->base.get_amount = sat_array_get_amount;
+        __object->base.next = sat_array_next;
         __object->initialized = true;
 
         *object = __object;
@@ -275,4 +283,28 @@ static sat_status_t sat_array_realloc (sat_array_t *object)
     }
 
     return status;
+}
+
+static void *sat_array_next (void *object, uint32_t index)
+{
+    sat_array_t *array = (sat_array_t *) object;
+
+    void *item = NULL;
+
+    if (array->object_size > 0)
+    {
+        item = &array->buffer [index * array->object_size];
+    }
+
+    return item;
+}
+
+static uint32_t sat_array_get_amount (void *object)
+{
+    sat_array_t *array = (sat_array_t *) object;
+    uint32_t amount = 0;
+
+    sat_array_get_size (array, &amount);
+
+    return amount;
 }

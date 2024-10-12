@@ -34,7 +34,8 @@ list (APPEND SAT_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/sat_uuid.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_scheduler.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_channel.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_shared_memory.c
-                         ${CMAKE_CURRENT_LIST_DIR}/src/sat_queue_ipc.c)
+                         ${CMAKE_CURRENT_LIST_DIR}/src/sat_queue_ipc.c
+                         ${CMAKE_CURRENT_LIST_DIR}/src/sat_iterator.c)
 
 list (APPEND SAT_LIBRARIES uuid m pthread dl pthread)
 
@@ -82,4 +83,7 @@ install (FILES include/sat_plugin.h      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 install (FILES include/sat_cache.h       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install (FILES include/sat_scheduler.h   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install (FILES include/sat_channel.h     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install (FILES include/sat_shared_memory.h     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install (FILES include/sat_queue_ipc.h   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install (FILES include/sat_iterator.h    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install (FILES include/sat_optionals.h   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

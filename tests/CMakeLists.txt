@@ -86,6 +86,10 @@ add_executable (test_sat_queue_ipc ${CMAKE_CURRENT_LIST_DIR}/test_sat_queue_ipc.
 target_link_libraries (test_sat_queue_ipc PUBLIC sat)
 add_test (NAME test_sat_queue_ipc COMMAND test_sat_queue_ipc)
 
+add_executable (test_sat_iterator ${CMAKE_CURRENT_LIST_DIR}/test_sat_iterator.c)
+target_link_libraries (test_sat_iterator PUBLIC sat)
+add_test (NAME test_sat_iterator COMMAND test_sat_iterator)
+
 add_subdirectory (test_mysql)
 add_subdirectory (test_postgres)
 add_subdirectory (test_sqlite)
