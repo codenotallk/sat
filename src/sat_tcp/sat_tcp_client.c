@@ -9,35 +9,55 @@
 #include <string.h>
 #include <math.h>
 
-static sat_status_t sat_tcp_client_set_socket (sat_tcp_t *object);
-static sat_status_t sat_tcp_client_get_ip_by_hostname (sat_tcp_t *object, sat_tcp_args_t *args);
+struct sat_tcp_client_t
+{
+    int socket;
+    char hostname [SAT_TCP_HOSTNAME_SIZE];
+    const char *port;
+};
 
-sat_status_t sat_tcp_client_open (sat_tcp_t *object, sat_tcp_args_t *args)
+static sat_status_t sat_tcp_client_set_socket (sat_tcp_client_t *object);
+static sat_status_t sat_tcp_client_get_ip_by_hostname (sat_tcp_client_t *object, sat_tcp_client_args_t *args);
+
+sat_status_t sat_tcp_client_open (sat_tcp_client_t **object, sat_tcp_client_args_t *args)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp client open error");
 
     if (args->hostname != NULL && args->port != NULL)
     {
-        strncpy (object->hostname, args->hostname, SAT_TCP_HOSTNAME_SIZE);
-        object->port = args->port;
-
         do 
         {
-            status = sat_tcp_client_get_ip_by_hostname (object, args);
-            if (sat_status_get_result (&status) == false)
+            sat_tcp_client_t *__object = calloc (1, sizeof (sat_tcp_client_t));
+            if (__object == NULL)
+            {
                 break;
+            }
 
-            status = sat_tcp_client_set_socket (object);
-            
+            status = sat_tcp_client_get_ip_by_hostname (__object, args);
+            if (sat_status_get_result (&status) == false)
+            {
+                free (__object);
+                break;
+            }
+
+            status = sat_tcp_client_set_socket (__object);
+            if (sat_status_get_result (&status) == false)
+            {
+                free (__object);
+                break;
+            }
+
+            __object->port = args->port;
+            *object = __object;
+
         } while (false);
-    }
 
-    sat_status_set (&status, true, "");
+    }
 
     return status;
 }
 
-sat_status_t sat_tcp_client_connect (sat_tcp_t *object)
+sat_status_t sat_tcp_client_connect (sat_tcp_client_t *object)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp client connect error");
 
@@ -57,7 +77,12 @@ sat_status_t sat_tcp_client_connect (sat_tcp_t *object)
     return status;
 }
 
-static sat_status_t sat_tcp_client_set_socket (sat_tcp_t *object)
+int sat_tcp_client_get_socket (sat_tcp_client_t *object)
+{
+    return object->socket;
+}
+
+static sat_status_t sat_tcp_client_set_socket (sat_tcp_client_t *object)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp client set socket error");
 
@@ -68,7 +93,7 @@ static sat_status_t sat_tcp_client_set_socket (sat_tcp_t *object)
     return status;
 }
 
-static sat_status_t sat_tcp_client_get_ip_by_hostname (sat_tcp_t *object, sat_tcp_args_t *args)
+static sat_status_t sat_tcp_client_get_ip_by_hostname (sat_tcp_client_t *object, sat_tcp_client_args_t *args)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp client get ip error");
     struct hostent *he = NULL;

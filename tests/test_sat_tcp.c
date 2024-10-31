@@ -60,13 +60,16 @@ static void *server_thread (void *args)
     sat_tcp_args_t _args = 
     {
         .type = sat_tcp_type_server,
-        .port = "1234",
-        .buffer = buffer,
-        .size = BUFFER_SIZE,
-        .events = 
+        .server = 
         {
-            .on_receive = on_receive,
-            .on_send = on_send
+            .port = "1234",
+            .buffer = buffer,
+            .size = BUFFER_SIZE,
+            .events = 
+            {
+                .on_receive = on_receive,
+                .on_send = on_send
+            }
         }
     };
 
@@ -107,8 +110,11 @@ static void *client_thread (void *args)
     sat_tcp_args_t _args = 
     {
         .type = sat_tcp_type_client,
-        .hostname = "localhost",
-        .port = "1234"
+        .client = 
+        {
+            .hostname = "localhost",
+            .port = "1234"
+        }
     };
 
     sat_status_t status = sat_tcp_init (&client);

@@ -8,36 +8,67 @@
 #include <netinet/in.h>
 #include <math.h>
 
-static sat_status_t sat_tcp_server_is_args_valid (sat_tcp_args_t *args);
-static sat_status_t sat_tcp_server_configure (sat_tcp_t *object);
-static sat_status_t sat_tcp_server_set_socket (sat_tcp_t *object);
-static sat_status_t sat_tcp_server_set_reuse_address (sat_tcp_t *object);
-static sat_status_t sat_tcp_server_set_bind (sat_tcp_t *object);
-static sat_status_t sat_tcp_server_listen (sat_tcp_t *object);
-static sat_status_t sat_tcp_server_handle_client (sat_tcp_t *object, int client);
-
-
-
-sat_status_t sat_tcp_server_open (sat_tcp_t *object, sat_tcp_args_t *args)
+struct sat_tcp_server_t
 {
-    sat_status_t status = sat_tcp_server_is_args_valid (args);
-
-    if (sat_status_get_result (&status) == true)
+    int socket;
+    const char *port;
+    char *buffer;
+    uint32_t size;
+    struct 
     {
-        object->buffer = args->buffer;
-        object->size = args->size;
-        object->port = args->port;
-        object->events.on_receive = args->events.on_receive;
-        object->events.on_send = args->events.on_send;
-        object->data = args->data;
+        sat_tcp_event_t on_receive;
+        sat_tcp_event_t on_send;
+    } events;
 
-        status = sat_tcp_server_configure (object);
-    }
+    void *data;
+};
+
+static void sat_tcp_server_copy_to_context (sat_tcp_server_t *object, sat_tcp_server_args_t *args);
+static sat_status_t sat_tcp_server_is_args_valid (sat_tcp_server_args_t *args);
+static sat_status_t sat_tcp_server_configure (sat_tcp_server_t *object);
+static sat_status_t sat_tcp_server_set_socket (sat_tcp_server_t *object);
+static sat_status_t sat_tcp_server_set_reuse_address (sat_tcp_server_t *object);
+static sat_status_t sat_tcp_server_set_bind (sat_tcp_server_t *object);
+static sat_status_t sat_tcp_server_listen (sat_tcp_server_t *object);
+static sat_status_t sat_tcp_server_handle_client (sat_tcp_server_t *object, int client);
+
+
+
+sat_status_t sat_tcp_server_open (sat_tcp_server_t **object, sat_tcp_server_args_t *args)
+{
+    sat_status_t status;
+
+    do
+    {
+        status = sat_tcp_server_is_args_valid (args);
+        if (sat_status_get_result (&status) == false)
+        {
+            break;
+        }
+
+        sat_tcp_server_t *__object = calloc (1, sizeof (sat_tcp_server_t));
+        if (__object == NULL)
+        {
+            break;
+        }
+
+        sat_tcp_server_copy_to_context (__object, args);
+
+        status = sat_tcp_server_configure (__object);
+        if (sat_status_get_result (&status) == false)
+        {
+            free (__object);
+            break;
+        }
+
+        *object = __object;
+
+    } while (false);
 
     return status;
 }
 
-sat_status_t sat_tcp_server_run (sat_tcp_t *object)
+sat_status_t sat_tcp_server_run (sat_tcp_server_t *object)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp server run error");
 
@@ -54,7 +85,12 @@ sat_status_t sat_tcp_server_run (sat_tcp_t *object)
     return status;
 }
 
-static sat_status_t sat_tcp_server_is_args_valid (sat_tcp_args_t *args)
+int sat_tcp_server_get_socket (sat_tcp_server_t *object)
+{
+    return object->socket;
+}
+
+static sat_status_t sat_tcp_server_is_args_valid (sat_tcp_server_args_t *args)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp server args error");
 
@@ -68,7 +104,7 @@ static sat_status_t sat_tcp_server_is_args_valid (sat_tcp_args_t *args)
     return status;
 }
 
-static sat_status_t sat_tcp_server_configure (sat_tcp_t *object)
+static sat_status_t sat_tcp_server_configure (sat_tcp_server_t *object)
 {
     sat_status_t status;
 
@@ -93,7 +129,7 @@ static sat_status_t sat_tcp_server_configure (sat_tcp_t *object)
     return status;
 }
 
-static sat_status_t sat_tcp_server_set_socket (sat_tcp_t *object)
+static sat_status_t sat_tcp_server_set_socket (sat_tcp_server_t *object)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp server set socket error");
 
@@ -104,7 +140,7 @@ static sat_status_t sat_tcp_server_set_socket (sat_tcp_t *object)
     return status;
 }
 
-static sat_status_t sat_tcp_server_set_reuse_address (sat_tcp_t *object)
+static sat_status_t sat_tcp_server_set_reuse_address (sat_tcp_server_t *object)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp server set reuse address error");
     int yes = 1;
@@ -115,7 +151,7 @@ static sat_status_t sat_tcp_server_set_reuse_address (sat_tcp_t *object)
     return status;
 }
 
-static sat_status_t sat_tcp_server_set_bind (sat_tcp_t *object)
+static sat_status_t sat_tcp_server_set_bind (sat_tcp_server_t *object)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp server set bind error");
 
@@ -133,7 +169,7 @@ static sat_status_t sat_tcp_server_set_bind (sat_tcp_t *object)
     return status;
 }
 
-static sat_status_t sat_tcp_server_listen (sat_tcp_t *object)
+static sat_status_t sat_tcp_server_listen (sat_tcp_server_t *object)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp server listen error");
     
@@ -142,7 +178,7 @@ static sat_status_t sat_tcp_server_listen (sat_tcp_t *object)
     return status;
 }
 
-static sat_status_t sat_tcp_server_handle_client (sat_tcp_t *object, int client)
+static sat_status_t sat_tcp_server_handle_client (sat_tcp_server_t *object, int client)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp server handle client error");
     
@@ -175,4 +211,14 @@ static sat_status_t sat_tcp_server_handle_client (sat_tcp_t *object, int client)
     }
     
     return status;
+}
+
+static void sat_tcp_server_copy_to_context (sat_tcp_server_t *object, sat_tcp_server_args_t *args)
+{
+    object->buffer = args->buffer;
+    object->size = args->size;
+    object->port = args->port;
+    object->events.on_receive = args->events.on_receive;
+    object->events.on_send = args->events.on_send;
+    object->data = args->data;
 }

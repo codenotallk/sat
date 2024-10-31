@@ -10,10 +10,10 @@
 #include <sat_tcp_client.h>
 #include <sat_tcp_server.h>
 
-typedef sat_status_t (*sat_tcp_open_t) (sat_tcp_t *object, sat_tcp_args_t *args);
+static int sat_tcp_get_socket (sat_tcp_t *object);
+static void sat_tcp_type_destroy (sat_tcp_t *object);
 
 static sat_status_t sat_tcp_type_open (sat_tcp_t *object, sat_tcp_args_t *args);
-static sat_status_t sat_tcp_type_error_open (sat_tcp_t *object, sat_tcp_args_t *args);
 
 sat_status_t sat_tcp_init (sat_tcp_t *object)
 {
@@ -47,7 +47,7 @@ sat_status_t sat_tcp_run (sat_tcp_t *object)
 
     if (object != NULL && object->type == sat_tcp_type_server)
     {
-        status = sat_tcp_server_run (object);
+        status = sat_tcp_server_run (object->server);
     }
 
     return status;
@@ -57,9 +57,9 @@ sat_status_t sat_tcp_connect (sat_tcp_t *object)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp connect error");
 
-    if (object != NULL&& object->type == sat_tcp_type_client)
+    if (object != NULL && object->type == sat_tcp_type_client)
     {
-        status = sat_tcp_client_connect (object);
+        status = sat_tcp_client_connect (object->client);
     }
 
     return status;
@@ -72,7 +72,9 @@ sat_status_t sat_tcp_send (sat_tcp_t *object, const char *data, uint32_t size)
 
     if (object != NULL && data != NULL && size > 0)
     {
-        _size = send (object->socket, data, size, 0);
+        int socket = sat_tcp_get_socket (object);
+
+        _size = send (socket, data, size, 0);
 
         if (_size == size)
             sat_status_set (&status, true, "");
@@ -89,7 +91,9 @@ sat_status_t sat_tcp_receive (sat_tcp_t *object, char *data, uint32_t *size)
 
     if (object != NULL && data != NULL && size != NULL && *size > 0)
     {
-        _size = recv (object->socket, data, *size, 0);
+        int socket = sat_tcp_get_socket (object);
+
+        _size = recv (socket, data, *size, 0);
 
         *size = _size;
 
@@ -105,7 +109,11 @@ sat_status_t sat_tcp_close (sat_tcp_t *object)
 
     if (object != NULL)
     {
-        shutdown (object->socket, SHUT_RDWR);
+        int socket = sat_tcp_get_socket (object);
+
+        shutdown (socket, SHUT_RDWR);
+
+        sat_tcp_type_destroy (object);
 
         sat_status_set (&status, true, "");
     }
@@ -115,25 +123,36 @@ sat_status_t sat_tcp_close (sat_tcp_t *object)
 
 static sat_status_t sat_tcp_type_open (sat_tcp_t *object, sat_tcp_args_t *args)
 {
-    sat_tcp_open_t open = sat_tcp_type_error_open;
+    sat_status_t status = sat_status_set (&status, false, "sat tcp type open error");
 
     object->type = args->type;
 
     if (object->type == sat_tcp_type_server)
-        open = sat_tcp_server_open;
+        status = sat_tcp_server_open (&object->server, &args->server);
     
     else if (object->type == sat_tcp_type_client)
-        open = sat_tcp_client_open;
-
-    return open (object, args);
-}
-
-static sat_status_t sat_tcp_type_error_open (sat_tcp_t *object, sat_tcp_args_t *args)
-{
-    sat_status_t status = sat_status_set (&status, false, "sat tcp type error");
-
-    (void) object;
-    (void) args;
+        status = sat_tcp_client_open (&object->client, &args->client);
 
     return status;
+}
+
+
+static int sat_tcp_get_socket (sat_tcp_t *object)
+{
+    int socket = -1;
+
+    if (object->type == sat_tcp_type_server)
+        socket = sat_tcp_server_get_socket (object->server);
+    else 
+        socket = sat_tcp_client_get_socket (object->client);
+
+    return socket;
+}
+
+static void sat_tcp_type_destroy (sat_tcp_t *object)
+{
+    if (object->type == sat_tcp_type_server)
+        free (object->server);
+    else 
+        free (object->client);
 }

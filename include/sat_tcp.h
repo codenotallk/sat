@@ -3,47 +3,23 @@
 
 #include <sat_status.h>
 #include <stdint.h>
-
-#define SAT_TCP_HOSTNAME_SIZE       1024
-
-typedef void (*sat_tcp_event_t) (char *buffer, uint32_t *size, void *data);
-
-typedef enum 
-{
-    sat_tcp_type_server,
-    sat_tcp_type_client
-} sat_tcp_type_t;
+#include <sat_tcp_types.h>
 
 typedef struct 
 {
-    int socket;
     sat_tcp_type_t type;
-    char hostname [SAT_TCP_HOSTNAME_SIZE];
-    const char *port;
-    char *buffer;
-    uint32_t size;
-    struct 
-    {
-        sat_tcp_event_t on_receive;
-        sat_tcp_event_t on_send;
-    } events;
-    void *data;
+    sat_tcp_server_t *server;
+    sat_tcp_client_t *client;
+
 } sat_tcp_t;
 
 
 typedef struct 
 {
     sat_tcp_type_t type;
-    char *hostname;
-    const char *port;
-    char *buffer;
-    uint32_t size;
-    struct 
-    {
-        sat_tcp_event_t on_receive;
-        sat_tcp_event_t on_send;
-    } events;
-    void *data;
+    sat_tcp_server_args_t server;
+    sat_tcp_client_args_t client;
+
 } sat_tcp_args_t;
 
 sat_status_t sat_tcp_init (sat_tcp_t *object);
