@@ -69,7 +69,8 @@ static void *server_thread (void *args)
             {
                 .on_receive = on_receive,
                 .on_send = on_send
-            }
+            },
+            .type = sat_tcp_server_type_interactive,
         }
     };
 

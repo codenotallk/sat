@@ -27,6 +27,8 @@ list (APPEND SAT_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/sat_uuid.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_tcp.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_tcp/sat_tcp_client.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_tcp/sat_tcp_server.c
+                         ${CMAKE_CURRENT_LIST_DIR}/src/sat_tcp/sat_tcp_server_abstract.c
+                         ${CMAKE_CURRENT_LIST_DIR}/src/sat_tcp/sat_tcp_server_interactive.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_worker.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_set.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_plugin.c

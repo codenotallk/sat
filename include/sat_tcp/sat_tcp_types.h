@@ -13,6 +13,12 @@ typedef enum
     sat_tcp_type_client
 } sat_tcp_type_t;
 
+typedef enum 
+{
+    sat_tcp_server_type_interactive,
+
+} sat_tcp_server_type_t;
+
 typedef struct sat_tcp_server_t sat_tcp_server_t;
 typedef struct sat_tcp_client_t sat_tcp_client_t;
 
@@ -29,6 +35,8 @@ typedef struct
     } events;
 
     void *data;
+
+    sat_tcp_server_type_t type;
 
 } sat_tcp_server_args_t;
 
