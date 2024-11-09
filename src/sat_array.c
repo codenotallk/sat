@@ -308,3 +308,15 @@ static uint32_t sat_array_get_amount (void *object)
 
     return amount;
 }
+
+void *sat_array_get_reference_by (sat_array_t *object, uint32_t index)
+{
+    void *item = NULL;
+
+    if (sat_array_is_initialized (object) == true && index < object->amount)
+    {
+        item = &object->buffer [index * object->object_size];
+    }
+
+    return item;
+}

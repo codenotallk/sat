@@ -32,4 +32,6 @@ sat_status_t sat_array_clear (sat_array_t *object);
 sat_status_t sat_array_get_capacity (sat_array_t *object, uint32_t *capacity);
 sat_status_t sat_array_destroy (sat_array_t *object);
 
+void *sat_array_get_reference_by (sat_array_t *object, uint32_t index);
+
 #endif/* SAT_ARRAY_H_ */

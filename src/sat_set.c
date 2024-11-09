@@ -2,9 +2,11 @@
 #include <sat_array.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sat_iterator.h>
 
 struct sat_set_t
 {
+    sat_iterator_base_t base;
     sat_array_t *array;
     void *element;
     uint32_t object_size;
@@ -12,6 +14,9 @@ struct sat_set_t
     uint32_t size;
     sat_set_mode_t mode;
 };
+
+static void *sat_set_next (void *object, uint32_t index);
+static uint32_t sat_set_get_amount (void *object);
 
 static sat_status_t sat_set_is_args_valid (sat_set_args_t *args);
 static void sat_set_set_context (sat_set_t *object, sat_set_args_t *args);
@@ -52,6 +57,10 @@ sat_status_t sat_set_create (sat_set_t **object, sat_set_args_t *args)
 
             break;
         }
+
+        __object->base.object = __object;
+        __object->base.get_amount = sat_set_get_amount;
+        __object->base.next = sat_set_next;
 
         *object = __object;
 
@@ -200,4 +209,29 @@ static sat_status_t sat_set_buffer_allocate (sat_set_t *object)
                                                 .object_size = object->object_size,
                                                 .mode = (sat_array_mode_t) object->mode
                                              });
+}
+
+static void *sat_set_next (void *object, uint32_t index)
+{
+    sat_set_t *set = (sat_set_t *) object;
+
+    void *item = NULL;
+
+    if (set->object_size > 0)
+    {
+        item = sat_array_get_reference_by (set->array, index);
+    }
+
+    return item;
+}
+
+static uint32_t sat_set_get_amount (void *object)
+{
+    sat_set_t *set = (sat_set_t *) object;
+
+    uint32_t amount = 0;
+
+    sat_array_get_size (set->array, &amount);
+
+    return amount;
 }
