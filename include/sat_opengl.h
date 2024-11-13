@@ -26,4 +26,11 @@ sat_status_t sat_opengl_add_shader_to_program (sat_opengl_t *object, const char 
 sat_status_t sat_opengl_compile_program (sat_opengl_t *object, const char *name);
 sat_status_t sat_opengl_close (sat_opengl_t *object);
 
+sat_status_t sat_opengl_create_vao (sat_opengl_t *object, const char *name);
+sat_status_t sat_opengl_enable_vao (sat_opengl_t *object, const char *name);
+sat_status_t sat_opengl_enable_program (sat_opengl_t *object, const char *name);
+sat_status_t sat_opengl_draw (sat_opengl_t *object);
+sat_status_t sat_opengl_set_color (sat_opengl_t *object, sat_opengl_color_t color);
+sat_status_t sat_opengl_add_vbo_to_vao (sat_opengl_t *object, const char *name, sat_opengl_vbo_args_t *args);
+
 #endif/* SAT_OPENGL_H_ */

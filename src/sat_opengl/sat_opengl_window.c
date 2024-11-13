@@ -31,14 +31,19 @@ sat_status_t sat_opengl_window_create (sat_opengl_window_t *object, sat_opengl_w
     return status;
 }
 
-void sat_opengl_window_run (sat_opengl_window_t *object)
+bool sat_opengl_window_run (sat_opengl_window_t *object)
 {
-    while (!glfwWindowShouldClose (object->handle))
-    {
+    bool status = true;
 
-        glfwSwapBuffers (object->handle);
-        glfwPollEvents ();
+    if (glfwWindowShouldClose (object->handle))
+    {
+        status = false;
     }
+
+    glfwSwapBuffers (object->handle);
+    glfwPollEvents ();
+
+    return status;
 }
 
 void sat_opengl_window_close (sat_opengl_window_t *object)

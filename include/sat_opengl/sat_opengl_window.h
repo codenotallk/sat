@@ -22,7 +22,7 @@ typedef struct
 } sat_opengl_window_args_t;
 
 sat_status_t sat_opengl_window_create (sat_opengl_window_t *object, sat_opengl_window_args_t *args);
-void sat_opengl_window_run (sat_opengl_window_t *object);
+bool sat_opengl_window_run (sat_opengl_window_t *object);
 void sat_opengl_window_close (sat_opengl_window_t *object);
 
 #endif/* SAT_OPENGL_WINDOW_H_ */
