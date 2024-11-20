@@ -10,4 +10,10 @@ if (${SAT_OPENGL})
     add_executable (test_sat_opengl_triangle ${CMAKE_CURRENT_LIST_DIR}/test_sat_opengl_triangle.c)
     target_link_libraries (test_sat_opengl_triangle PUBLIC sat)
     add_test (NAME test_sat_opengl_triangle COMMAND test_sat_opengl_triangle ${CMAKE_CURRENT_LIST_DIR})
+
+    add_executable (test_sat_opengl_triangle_indexes ${CMAKE_CURRENT_LIST_DIR}/test_sat_opengl_triangle_indexes.c)
+    target_link_libraries (test_sat_opengl_triangle_indexes PUBLIC sat)
+    add_test (NAME test_sat_opengl_triangle_indexes COMMAND test_sat_opengl_triangle_indexes ${CMAKE_CURRENT_LIST_DIR})
+
+    
 endif ()

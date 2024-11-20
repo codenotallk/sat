@@ -3,6 +3,7 @@
 #include <sat_opengl_program.h>
 #include <sat_opengl_vao.h>
 #include <sat_opengl_vbo.h>
+#include <sat_opengl_ebo.h>
 
 #include <sat_set.h>
 #include <sat_iterator.h>
@@ -26,6 +27,7 @@ static sat_status_t sat_opengl_check_args (sat_opengl_args_t *args);
 static sat_status_t sat_opengl_init (void);
 static bool sat_opengl_is_program_equal (void *element, void *new_element);
 static bool sat_opengl_is_vao_equal (void *element, void *new_element);
+static void sat_opengl_draw_by (sat_opengl_draw_type_t type, uint32_t vertices_amount);
 
 sat_status_t sat_opengl_create (sat_opengl_t **object, sat_opengl_args_t *args)
 {
@@ -361,13 +363,15 @@ sat_status_t sat_opengl_enable_program (sat_opengl_t *object, const char *name)
     return status;
 }
 
-sat_status_t sat_opengl_draw (sat_opengl_t *object)
+sat_status_t sat_opengl_draw (sat_opengl_t *object, sat_opengl_draw_type_t type, uint32_t vertices_amount)
 {
     sat_status_t status = sat_status_set (&status, false, "sat opengl draw error");
 
     if (object != NULL && object->initialized == true)
     {
-        glDrawArrays (GL_TRIANGLES, 0, 3);
+        // glDrawArrays (GL_TRIANGLES, 0, 3);
+
+        sat_opengl_draw_by (type, vertices_amount);
 
         if (sat_opengl_window_run (&object->window) == true)
         {
@@ -425,6 +429,16 @@ sat_status_t sat_opengl_add_vbo_to_vao (sat_opengl_t *object, const char *name, 
 
                     sat_opengl_vbo_set_vertices (&vbo, &args->vertices);
                     sat_opengl_vbo_set_attributes (&vbo, &args->attribute);
+
+                    if (args->indexes.list != NULL && args->indexes.size > 0)
+                    {
+                        sat_opengl_ebo_t ebo;
+
+                        sat_opengl_ebo_create (&ebo);
+                        sat_opengl_ebo_enable (&ebo);
+
+                        sat_opengl_ebo_set_indexes (&ebo, &args->indexes);
+                    }
 
                     sat_opengl_vbo_disable (&vbo);
                     sat_opengl_vao_disable (vao);
@@ -498,4 +512,16 @@ static bool sat_opengl_is_vao_equal (void *element, void *new_element)
     }
 
     return status;
+}
+
+static void sat_opengl_draw_by (sat_opengl_draw_type_t type, uint32_t vertices_amount)
+{
+    if (type == sat_opengl_draw_type_triangles)
+    {
+        glDrawArrays (GL_TRIANGLES, 0, vertices_amount);
+    }
+    else 
+    {
+        glDrawElements (GL_TRIANGLES, vertices_amount, GL_UNSIGNED_INT, 0);
+    }
 }

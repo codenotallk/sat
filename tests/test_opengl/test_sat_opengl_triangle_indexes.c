@@ -8,9 +8,16 @@ int main (int argc, char *argv [])
 
     float vertices [] = 
     {
-       -0.5f, -0.5f, 0.0f,
+        0.5f,  0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
+       -0.5f, -0.5f, 0.0f,
+       -0.5f,  0.5f, 0.0f,
+    };
+
+    unsigned int indexes [] = 
+    {
+      0, 1, 3,
+      1, 2, 3
     };
 
     assert (argc == 3);
@@ -58,6 +65,11 @@ int main (int argc, char *argv [])
                                                                 .amount = 3,
                                                                 .elements = 3,
                                                                 .offset = 0
+                                                              },
+                                                              .indexes = 
+                                                              {
+                                                                .list = indexes,
+                                                                .size = sizeof (indexes)
                                                               }
                                                             });
     assert (sat_status_get_result (&status) == true);
@@ -72,7 +84,7 @@ int main (int argc, char *argv [])
       status = sat_opengl_enable_vao (opengl, "triangle");
       assert (sat_status_get_result (&status) == true);
 
-      status = sat_opengl_draw (opengl, sat_opengl_draw_type_triangles, 3);
+      status = sat_opengl_draw (opengl, sat_opengl_draw_type_elements, 6);
     }
 
     status = sat_opengl_close (opengl);

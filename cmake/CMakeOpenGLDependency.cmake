@@ -9,7 +9,8 @@ if (${SAT_OPENGL})
                              ${CMAKE_SOURCE_DIR}/src/sat_opengl/sat_opengl_program.c
                              ${CMAKE_SOURCE_DIR}/src/sat_opengl/sat_opengl_shader.c
                              ${CMAKE_SOURCE_DIR}/src/sat_opengl/sat_opengl_vao.c
-                             ${CMAKE_SOURCE_DIR}/src/sat_opengl/sat_opengl_vbo.c)
+                             ${CMAKE_SOURCE_DIR}/src/sat_opengl/sat_opengl_vbo.c
+                             ${CMAKE_SOURCE_DIR}/src/sat_opengl/sat_opengl_ebo.c)
 
     list (APPEND SAT_INCLUDES ${CMAKE_SOURCE_DIR}/include/sat_opengl)
     file (APPEND ${CMAKE_SOURCE_DIR}/include/sat_optionals.h "#include <sat_opengl.h>\n")
