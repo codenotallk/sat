@@ -2,6 +2,7 @@
 #define SAT_OPENGL_TYPES_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum 
 {
@@ -57,5 +58,59 @@ typedef enum
     sat_opengl_draw_type_elements,
     
 } sat_opengl_draw_type_t;
+
+typedef enum 
+{
+    sat_opengl_value_send_one,
+    sat_opengl_value_send_two,
+    sat_opengl_value_send_three,
+    sat_opengl_value_send_four,
+
+} sat_opengl_value_send_t;
+
+typedef struct 
+{
+    float first;
+    float second;
+    float third;
+    float fourth;
+
+} sat_opengl_value_float_t;
+
+typedef struct 
+{
+    int first;
+    int second;
+    int third;
+    int fourth;
+    
+} sat_opengl_value_int_t;
+
+typedef struct 
+{
+    bool first;
+    bool second;
+    bool third;
+    bool fourth;
+    
+} sat_opengl_value_bool_t;
+
+typedef enum
+{
+    sat_opengl_value_type_bool,
+    sat_opengl_value_type_int,
+    sat_opengl_value_type_float,
+
+} sat_opengl_value_type_t;
+
+typedef struct 
+{
+   sat_opengl_value_type_t type;
+   sat_opengl_value_send_t send;
+   sat_opengl_value_bool_t bools;
+   sat_opengl_value_int_t ints;
+   sat_opengl_value_float_t floats;
+
+} sat_opengl_value_t;
 
 #endif/* SAT_OPENGL_TYPES_H_ */

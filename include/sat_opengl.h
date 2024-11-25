@@ -33,4 +33,7 @@ sat_status_t sat_opengl_draw (sat_opengl_t *object, sat_opengl_draw_type_t type,
 sat_status_t sat_opengl_set_color (sat_opengl_t *object, sat_opengl_color_t color);
 sat_status_t sat_opengl_add_vbo_to_vao (sat_opengl_t *object, const char *name, sat_opengl_vbo_args_t *args);
 
+sat_status_t sat_opengl_send_shader_value (sat_opengl_t *object, const char *name, const char *param, const sat_opengl_value_t *value);
+sat_status_t sat_opengl_get_time (sat_opengl_t *object, float *value);
+
 #endif/* SAT_OPENGL_H_ */

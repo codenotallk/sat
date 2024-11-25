@@ -154,3 +154,105 @@ static sat_status_t sat_opengl_program_check_link_status (sat_opengl_shader_t *o
 
     return status;    
 }
+
+sat_status_t sat_opengl_program_set_bool (sat_opengl_program_t *object, const char *name, sat_opengl_value_send_t send, sat_opengl_value_bool_t *value)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat opengl program set bool error");
+
+    GLint location = glGetUniformLocation (object->id, name);
+
+    // TODO Test location first.
+
+    switch (send)
+    {
+        case sat_opengl_value_send_one:
+        glUniform1i (location, (int) value->first);
+        sat_status_set (&status, true, "");
+        break;
+
+        case sat_opengl_value_send_two:
+        glUniform2i (location, (int) value->first, (int) value->second);
+        sat_status_set (&status, true, "");
+        break;
+
+        case sat_opengl_value_send_three:
+        glUniform3i (location, (int) value->first, (int) value->second, (int) value->third);
+        sat_status_set (&status, true, "");
+        break;
+
+        case sat_opengl_value_send_four:
+        glUniform4i (location, (int) value->first, (int) value->second, (int) value->third, (int) value->fourth);
+        sat_status_set (&status, true, "");
+        break;
+    }
+
+    return status;
+}
+
+sat_status_t sat_opengl_program_set_int (sat_opengl_program_t *object, const char *name, sat_opengl_value_send_t send, sat_opengl_value_int_t *value)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat opengl program set int error");
+
+    GLint location = glGetUniformLocation (object->id, name);
+
+    // TODO Test location first.
+
+    switch (send)
+    {
+        case sat_opengl_value_send_one:
+        glUniform1i (location, value->first);
+        sat_status_set (&status, true, "");
+        break;
+
+        case sat_opengl_value_send_two:
+        glUniform2i (location, value->first, value->second);
+        sat_status_set (&status, true, "");
+        break;
+
+        case sat_opengl_value_send_three:
+        glUniform3i (location, value->first, value->second, value->third);
+        sat_status_set (&status, true, "");
+        break;
+
+        case sat_opengl_value_send_four:
+        glUniform4i (location, value->first, value->second, value->third, value->fourth);
+        sat_status_set (&status, true, "");
+        break;
+    }
+
+    return status;
+}
+
+sat_status_t sat_opengl_program_set_float (sat_opengl_program_t *object, const char *name, sat_opengl_value_send_t send, sat_opengl_value_float_t *value)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat opengl program set float error");
+
+    GLint location = glGetUniformLocation (object->id, name);
+
+    // TODO Test location first.
+
+    switch (send)
+    {
+        case sat_opengl_value_send_one:
+        glUniform1f (location, value->first);
+        sat_status_set (&status, true, "");
+        break;
+
+        case sat_opengl_value_send_two:
+        glUniform2f (location, value->first, value->second);
+        sat_status_set (&status, true, "");
+        break;
+
+        case sat_opengl_value_send_three:
+        glUniform3f (location, value->first, value->second, value->third);
+        sat_status_set (&status, true, "");
+        break;
+
+        case sat_opengl_value_send_four:
+        glUniform4f (location, value->first, value->second, value->third, value->fourth);
+        sat_status_set (&status, true, "");
+        break;
+    }
+
+    return status;
+}

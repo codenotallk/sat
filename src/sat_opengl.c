@@ -456,6 +456,68 @@ sat_status_t sat_opengl_add_vbo_to_vao (sat_opengl_t *object, const char *name, 
 }
 
 
+sat_status_t sat_opengl_send_shader_value (sat_opengl_t *object, const char *name, const char *param, const sat_opengl_value_t *value)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat opengl send shader value error");
+
+    if (object != NULL && object->initialized == true && name != NULL && strlen (name) > 0)
+    {
+        sat_iterator_t iterator;
+
+        do 
+        {
+            status = sat_iterator_open (&iterator, object->programs);
+            if (sat_status_get_result (&status) == false)
+            {
+                break;
+            }
+
+            sat_opengl_program_t *program = (sat_opengl_program_t *) sat_iterator_next (&iterator);
+
+            while (program != NULL)
+            {
+                if (strcmp (program->name, name) == 0)
+                {
+                    switch (value->type)
+                    {
+                        case sat_opengl_value_type_bool:
+                        status = sat_opengl_program_set_bool (program, param, value->send, &value->bools);
+                        break;
+
+                        case sat_opengl_value_type_int:
+                        status = sat_opengl_program_set_int (program, param, value->send, &value->ints);
+                        break;
+
+                        case sat_opengl_value_type_float:
+                        status = sat_opengl_program_set_float (program, param, value->send, &value->floats);
+                        break;
+                    }
+                    break;
+                }
+
+                program = (sat_opengl_program_t *) sat_iterator_next (&iterator);
+            }
+
+        } while (false);
+    }
+
+    return status;
+}
+
+sat_status_t sat_opengl_get_time (sat_opengl_t *object, float *value)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat opengl get time error");
+
+    if (object != NULL && object->initialized == true && value != NULL)
+    {
+        *value = glfwGetTime ();
+
+        sat_status_set (&status, true, "");
+    }
+
+    return status;
+}
+
 
 static sat_status_t sat_opengl_check_args (sat_opengl_args_t *args)
 {
