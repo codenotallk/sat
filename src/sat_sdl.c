@@ -31,6 +31,7 @@ struct sat_sdl_t
     struct 
     {
         sat_sdl_event_on_key_pressed_t on_key_pressed;
+        sat_sdl_event_on_key_released_t on_key_released;
         sat_sdl_event_on_mouse_event_t on_mouse_event;
     } events;
 
@@ -260,6 +261,20 @@ sat_status_t sat_sdl_set_event_key_pressed (sat_sdl_t *object, sat_sdl_event_on_
     return status;
 }
 
+sat_status_t sat_sdl_set_event_key_released (sat_sdl_t *object, sat_sdl_event_on_key_pressed_t on_key_released)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl set event key error");
+
+    if (object != NULL && object->initialized == true && on_key_released != NULL)
+    {
+        object->events.on_key_released = on_key_released;
+
+        sat_status_set (&status, true, "");
+    }
+
+    return status;
+}
+
 sat_status_t sat_sdl_set_event_mouse_event (sat_sdl_t *object, sat_sdl_event_on_mouse_event_t on_mouse_event)
 {
     sat_status_t status = sat_status_set (&status, false, "sat sdl set event key error");
@@ -267,6 +282,33 @@ sat_status_t sat_sdl_set_event_mouse_event (sat_sdl_t *object, sat_sdl_event_on_
     if (object != NULL && object->initialized == true && on_mouse_event != NULL)
     {
         object->events.on_mouse_event = on_mouse_event;
+
+        sat_status_set (&status, true, "");
+    }
+
+    return status;
+}
+
+sat_status_t sat_sdl_wait_key_pressed (sat_sdl_t *object, sat_sdl_key_t *key)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl set context error");
+
+    if (object != NULL && object->initialized == true && key != NULL)
+    {
+        SDL_Event event;
+
+        while(true)
+        {
+            SDL_WaitEvent(&event);
+
+            printf ("Event type: %d\n", event.type);
+            if (event.type == SDL_KEYDOWN || event.type == SDL_QUIT)
+            {
+                break;
+            }
+        }
+
+        *key = sat_sdl_key_get (event.key.keysym.sym);
 
         sat_status_set (&status, true, "");
     }
@@ -395,13 +437,13 @@ sat_status_t sat_sdl_scan_events (sat_sdl_t *object)
     {
         sat_status_set (&status, true, "");
 
-        const Uint8 *key_state = SDL_GetKeyboardState (NULL);
+        // const Uint8 *key_state = SDL_GetKeyboardState (NULL);
 
-        if (object->events.on_key_pressed != NULL)
-        {
-            object->events.on_key_pressed (object->context,
-                                            sat_sdl_key_get_by (key_state));
-        }
+        // if (object->events.on_key_pressed != NULL)
+        // {
+        //     object->events.on_key_pressed (object->context,
+        //                                     sat_sdl_key_get_by (key_state));
+        // }
         
         while (SDL_PollEvent (&event))
         {
@@ -409,6 +451,18 @@ sat_status_t sat_sdl_scan_events (sat_sdl_t *object)
             {
                 sat_status_set (&status, false, "");
                 break;
+            }
+
+            else if (event.type == SDL_KEYDOWN && object->events.on_key_pressed != NULL)
+            {
+                object->events.on_key_pressed (object->context,
+                                            sat_sdl_key_get (event.key.keysym.sym));
+            }
+
+            else if (event.type == SDL_KEYUP && object->events.on_key_released != NULL)
+            {
+                object->events.on_key_released (object->context,
+                                            sat_sdl_key_get (event.key.keysym.sym));
             }
 
             else if ((event.type == SDL_MOUSEMOTION     ||

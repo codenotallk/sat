@@ -6,6 +6,7 @@
 #include <sat_sdl_types.h>
 
 typedef void (*sat_sdl_event_on_key_pressed_t) (void *object, sat_sdl_key_t key);
+typedef void (*sat_sdl_event_on_key_released_t) (void *object, sat_sdl_key_t key);
 typedef void (*sat_sdl_event_on_mouse_event_t) (void *object, sat_sdl_mouse_event_type_t event, sat_sdl_coordinate_t coordinate);
 
 

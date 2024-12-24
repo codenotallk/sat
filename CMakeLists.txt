@@ -79,6 +79,7 @@ install (FILES include/sat_linked_list.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 install (FILES include/sat_queue.h       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install (FILES include/sat_map.h         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install (FILES include/sat_tcp.h         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install (FILES include/sat_tcp/sat_tcp_types.h   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install (FILES include/sat_worker.h      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install (FILES include/sat_set.h         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install (FILES include/sat_plugin.h      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

@@ -13,7 +13,9 @@ sat_status_t sat_sdl_image_add (sat_sdl_t *object, char *name, const char *file,
 sat_status_t sat_sdl_font_add (sat_sdl_t *object, char *name, const char *file, uint16_t size);
 sat_status_t sat_sdl_set_text (sat_sdl_t *object, char *font, char *text, sat_sdl_rectangle_t rectangle);
 sat_status_t sat_sdl_set_event_key_pressed (sat_sdl_t *object, sat_sdl_event_on_key_pressed_t on_key_pressed);
+sat_status_t sat_sdl_set_event_key_released (sat_sdl_t *object, sat_sdl_event_on_key_released_t sat_sdl_event_on_key_released_t);
 sat_status_t sat_sdl_set_event_mouse_event (sat_sdl_t *object, sat_sdl_event_on_mouse_event_t on_mouse_event);
+sat_status_t sat_sdl_wait_key_pressed (sat_sdl_t *object, sat_sdl_key_t *key);
 sat_status_t sat_sdl_set_context (sat_sdl_t *object, void *context);
 sat_status_t sat_sdl_set_viewport (sat_sdl_t *object, sat_sdl_rectangle_t rectangle);
 sat_status_t sat_sdl_clear (sat_sdl_t *object);

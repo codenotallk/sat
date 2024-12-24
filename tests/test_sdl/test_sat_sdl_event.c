@@ -86,14 +86,30 @@ static void sat_sdl_event_on_key_pressed (void *object, sat_sdl_key_t key)
     }
 }
 
+static void sat_sdl_event_on_key_released (void *object, sat_sdl_key_t key)
+{
+    sat_sdl_t *sdl = (sat_sdl_t *)object;
+
+    char *command = "center";
+
+    sat_sdl_clear (sdl);
+    sat_sdl_set_image (sdl, command, rectangle);
+    sat_sdl_draw (sdl);
+}
+
 int main (int argc, char *argv[])
 {
     sat_sdl_t *sdl;
+    sat_sdl_key_t key;
 
     sat_status_t status = sat_sdl_init (&sdl, "Window Title", SAT_SDL_SCREEN_WIDTH, SAT_SDL_SCREEN_HEIGHT);
     assert (sat_status_get_result (&status) == true);
 
     status = sat_sdl_set_event_key_pressed (sdl, sat_sdl_event_on_key_pressed);
+    assert (sat_status_get_result (&status) == true);
+
+
+    status = sat_sdl_set_event_key_released (sdl, sat_sdl_event_on_key_released);
     assert (sat_status_get_result (&status) == true);
 
     status = sat_sdl_set_context (sdl, sdl);
@@ -123,6 +139,11 @@ int main (int argc, char *argv[])
 
         usleep (100000);
     } while (sat_status_get_result (&status) == true);
+
+    puts ("Press any key to finish...");
+    sat_sdl_wait_key_pressed (sdl, &key);
+
+    printf ("Key: %d\n", key);
 
     status = sat_sdl_close (sdl);
     assert (sat_status_get_result (&status) == true);
