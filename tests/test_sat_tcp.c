@@ -62,7 +62,7 @@ static void *server_thread (void *args)
         .type = sat_tcp_type_server,
         .server = 
         {
-            .port = "1234",
+            .service = "1234",
             .buffer = buffer,
             .size = BUFFER_SIZE,
             .events = 

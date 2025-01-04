@@ -3,15 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <math.h>
 
-static sat_status_t sat_tcp_server_abstract_set_socket (sat_tcp_server_abstract_t *object);
+static sat_status_t sat_tcp_server_abstract_set_socket (sat_tcp_server_abstract_t *object, struct addrinfo *info);
 static sat_status_t sat_tcp_server_abstract_set_reuse_address (sat_tcp_server_abstract_t *object);
-static sat_status_t sat_tcp_server_abstract_set_bind (sat_tcp_server_abstract_t *object);
+static sat_status_t sat_tcp_server_abstract_set_bind (sat_tcp_server_abstract_t *object, struct addrinfo *info);
 static sat_status_t sat_tcp_server_abstract_listen (sat_tcp_server_abstract_t *object);
 static sat_status_t sat_tcp_server_abstract_select_type (sat_tcp_server_abstract_t *object);
 
@@ -19,7 +20,7 @@ void sat_tcp_server_abstract_copy_to_context (sat_tcp_server_abstract_t *object,
 {
     object->buffer = args->buffer;
     object->size = args->size;
-    object->port = args->port;
+    object->service = args->service;
     object->events.on_receive = args->events.on_receive;
     object->events.on_send = args->events.on_send;
     object->data = args->data;
@@ -32,7 +33,7 @@ sat_status_t sat_tcp_server_abstract_is_args_valid (sat_tcp_server_args_t *args)
 
     if (args->buffer != NULL &&
         args->size > 0 && 
-        args->port != NULL)
+        args->service != NULL)
     {
         sat_status_set (&status, true, "");
     }
@@ -40,23 +41,28 @@ sat_status_t sat_tcp_server_abstract_is_args_valid (sat_tcp_server_args_t *args)
     return status;
 }
 
-sat_status_t sat_tcp_server_abstract_configure (sat_tcp_server_abstract_t *object)
+sat_status_t sat_tcp_server_abstract_configure (sat_tcp_server_abstract_t *object, struct addrinfo *info_list)
 {
     sat_status_t status;
 
-    do 
+    struct addrinfo *info = NULL;
+
+    for (info = info_list; info != NULL; info = info->ai_next)
     {
-        status = sat_tcp_server_abstract_set_socket (object);
+        status = sat_tcp_server_abstract_set_socket (object, info);
         if (sat_status_get_result (&status) == false)
-            break;
+            continue;
 
         status = sat_tcp_server_abstract_set_reuse_address (object);
         if (sat_status_get_result (&status) == false)
             break;
 
-        status = sat_tcp_server_abstract_set_bind (object);
+        status = sat_tcp_server_abstract_set_bind (object, info);
         if (sat_status_get_result (&status) == false)
-            break;
+        {
+            close (object->socket);
+            continue;
+        }
 
         status = sat_tcp_server_abstract_select_type (object);
         if (sat_status_get_result (&status) == false)
@@ -64,16 +70,18 @@ sat_status_t sat_tcp_server_abstract_configure (sat_tcp_server_abstract_t *objec
 
         status = sat_tcp_server_abstract_listen (object);
 
-    } while (false);
+        break;
+    }
 
     return status;
 }
 
-static sat_status_t sat_tcp_server_abstract_set_socket (sat_tcp_server_abstract_t *object)
+static sat_status_t sat_tcp_server_abstract_set_socket (sat_tcp_server_abstract_t *object, struct addrinfo *info)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp server set socket error");
 
-    object->socket = socket (AF_INET, SOCK_STREAM, 0);
+    object->socket = socket (info->ai_family, info->ai_socktype, info->ai_protocol);
+
     if (object->socket >= 0)
         sat_status_set (&status, true, "");
 
@@ -91,19 +99,11 @@ static sat_status_t sat_tcp_server_abstract_set_reuse_address (sat_tcp_server_ab
     return status;
 }
 
-static sat_status_t sat_tcp_server_abstract_set_bind (sat_tcp_server_abstract_t *object)
+static sat_status_t sat_tcp_server_abstract_set_bind (sat_tcp_server_abstract_t *object, struct addrinfo *info)
 {
     sat_status_t status = sat_status_set (&status, false, "sat tcp server set bind error");
 
-    struct sockaddr_in address;
-
-    memset (&address, 0, sizeof (struct sockaddr_in));
-
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons (atoi (object->port));
-
-    if (bind (object->socket, (const struct sockaddr *)&address, sizeof (struct sockaddr_in)) == 0)
+    if (bind (object->socket, info->ai_addr, info->ai_addrlen) == 0)
         sat_status_set (&status, true, "");
 
     return status;

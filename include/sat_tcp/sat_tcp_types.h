@@ -24,7 +24,7 @@ typedef struct sat_tcp_client_t sat_tcp_client_t;
 
 typedef struct 
 {
-    const char *port;
+    const char *service;
     char *buffer;
     uint32_t size;
 
