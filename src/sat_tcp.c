@@ -53,17 +53,6 @@ sat_status_t sat_tcp_run (sat_tcp_t *object)
     return status;
 }
 
-sat_status_t sat_tcp_connect (sat_tcp_t *object)
-{
-    sat_status_t status = sat_status_set (&status, false, "sat tcp connect error");
-
-    if (object != NULL && object->type == sat_tcp_type_client)
-    {
-        status = sat_tcp_client_connect (object->client);
-    }
-
-    return status;
-}
 
 sat_status_t sat_tcp_send (sat_tcp_t *object, const char *data, uint32_t size)
 {

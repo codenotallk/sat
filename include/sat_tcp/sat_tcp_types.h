@@ -43,7 +43,7 @@ typedef struct
 typedef struct 
 {
     char *hostname;
-    const char *port;
+    const char *service;
 } sat_tcp_client_args_t;
 
 #endif/* SAT_TCP_TYPES_H_ */

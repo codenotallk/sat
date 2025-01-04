@@ -114,7 +114,7 @@ static void *client_thread (void *args)
         .client = 
         {
             .hostname = "localhost",
-            .port = "1234"
+            .service = "1234"
         }
     };
 
@@ -122,9 +122,6 @@ static void *client_thread (void *args)
     assert (sat_status_get_result (&status) == true);
 
     status = sat_tcp_open (&client, &_args);
-    assert (sat_status_get_result (&status) == true);
-
-    status = sat_tcp_connect (&client);
     assert (sat_status_get_result (&status) == true);
 
     while (send_count++ < 10)

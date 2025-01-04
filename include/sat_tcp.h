@@ -25,7 +25,6 @@ typedef struct
 sat_status_t sat_tcp_init (sat_tcp_t *object);
 sat_status_t sat_tcp_open (sat_tcp_t *object, sat_tcp_args_t *args);
 sat_status_t sat_tcp_run (sat_tcp_t *object);
-sat_status_t sat_tcp_connect (sat_tcp_t *object);
 sat_status_t sat_tcp_send (sat_tcp_t *object, const char *data, uint32_t size);
 sat_status_t sat_tcp_receive (sat_tcp_t *object, char *data, uint32_t *size);
 sat_status_t sat_tcp_close (sat_tcp_t *object);
