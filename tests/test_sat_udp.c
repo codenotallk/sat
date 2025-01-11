@@ -57,7 +57,7 @@ static void *server_thread (void *args)
     sat_udp_args_t _args = 
     {
         .type = sat_udp_type_server,
-        .port = "1234",
+        .service = "1234",
         .buffer = buffer,
         .size = BUFFER_SIZE,
         .events = 
@@ -98,7 +98,7 @@ static void *client_thread (void *args)
     {
         .type = sat_udp_type_client,
         .hostname = "localhost",
-        .port = "1234"
+        .service = "1234"
     };
 
     sat_status_t status = sat_udp_init (&client);

@@ -11,10 +11,10 @@ sat_status_t sat_udp_client_open (sat_udp_t *object, sat_udp_args_t *args)
 {
     sat_status_t status = sat_status_set (&status, false, "sat udp client open error");
 
-    if (args->hostname != NULL && args->port != NULL)
+    if (args->hostname != NULL && args->service != NULL)
     {
         strncpy (object->hostname, args->hostname, SAT_UDP_HOSTNAME_SIZE);
-        object->port = args->port;
+        object->service = args->service;
 
         do 
         {

@@ -19,8 +19,8 @@ list (APPEND SAT_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/sat_uuid.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_stack.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_array.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_udp.c
-                         ${CMAKE_CURRENT_LIST_DIR}/src/sat_udp_server.c
-                         ${CMAKE_CURRENT_LIST_DIR}/src/sat_udp_client.c
+                         ${CMAKE_CURRENT_LIST_DIR}/src/sat_udp/sat_udp_server.c
+                         ${CMAKE_CURRENT_LIST_DIR}/src/sat_udp/sat_udp_client.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_linked_list.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_queue.c
                          ${CMAKE_CURRENT_LIST_DIR}/src/sat_map.c
@@ -41,7 +41,9 @@ list (APPEND SAT_SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/sat_uuid.c
 
 list (APPEND SAT_LIBRARIES uuid m pthread dl pthread)
 
-list (APPEND SAT_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/include ${CMAKE_CURRENT_LIST_DIR}/include/sat_tcp/)
+list (APPEND SAT_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/include
+                          ${CMAKE_CURRENT_LIST_DIR}/include/sat_tcp/
+                          ${CMAKE_CURRENT_LIST_DIR}/include/sat_udp/)
 
 file (WRITE ${CMAKE_CURRENT_LIST_DIR}/include/sat_optionals.h "")
 

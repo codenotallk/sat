@@ -19,7 +19,7 @@ typedef struct
     int socket;
     sat_udp_type_t type;
     char hostname [SAT_UDP_HOSTNAME_SIZE];
-    const char *port;
+    const char *service;
     char *buffer;
     uint32_t size;
     struct 
@@ -35,7 +35,7 @@ typedef struct
 {
     sat_udp_type_t type;
     char *hostname;
-    const char *port;
+    const char *service;
     char *buffer;
     uint32_t size;
     struct 

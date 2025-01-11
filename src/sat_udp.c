@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netdb.h>
 
 #include <sat_udp_client.h>
 #include <sat_udp_server.h>
@@ -62,20 +63,35 @@ sat_status_t sat_udp_send (sat_udp_t *object, const char *data, uint32_t size)
 {
     sat_status_t status = sat_status_set (&status, false, "sat udp send error");
 
-    struct sockaddr_in address_in;
+    // struct sockaddr_in address_in;
     size_t _size;
 
     if (object != NULL && data != NULL && size > 0)
     {
-        memset (&address_in, 0, sizeof (struct sockaddr_in));
+        // memset (&address_in, 0, sizeof (struct sockaddr_in));
 
-        address_in.sin_family = AF_INET;
-        address_in.sin_addr.s_addr = inet_addr (object->hostname);
-        address_in.sin_port = htons (atoi (object->port));
+        struct addrinfo hints;
+        memset (&hints, 0, sizeof (hints));
+        hints.ai_family = AF_UNSPEC;
 
-        _size = sendto (object->socket, data, size, 0, (struct sockaddr *)&address_in, sizeof (address_in));
+        hints.ai_socktype = SOCK_DGRAM;
+        hints.ai_protocol = IPPROTO_UDP;
 
-        _size == size ?  sat_status_set (&status, true, "") :  sat_status_set (&status, false, "sat udp send size error");
+        struct addrinfo *address;
+
+        int r = getaddrinfo (object->hostname, object->service, &hints, &address);
+
+        if (r == 0)
+        {
+            _size = sendto (object->socket, data, size, 0, address->ai_addr, address->ai_addrlen);
+            _size == size ?  sat_status_set (&status, true, "") :  sat_status_set (&status, false, "sat udp send size error");
+
+            freeaddrinfo (address);
+        }
+
+        // address_in.sin_family = AF_INET;
+        // address_in.sin_addr.s_addr = inet_addr (object->hostname);
+        // address_in.sin_port = htons (atoi (object->service));
     }
 
     return status;
@@ -85,14 +101,14 @@ sat_status_t sat_udp_receive (sat_udp_t *object, char *data, uint32_t *size)
 {
     sat_status_t status = sat_status_set (&status, false, "sat udp receive error");
 
-    struct sockaddr_in address_in;
-    socklen_t length = sizeof (address_in);
+    struct sockaddr_storage source;
+    socklen_t source_len = sizeof (source);
     size_t _size = 0;
 
     if (object != NULL && data != NULL && size != NULL && *size > 0)
     {
         memset (data, 0, *size);
-        _size = recvfrom (object->socket, data, *size, MSG_WAITALL, (struct sockaddr *)&address_in, &length);
+        _size = recvfrom (object->socket, data, *size, 0, (struct sockaddr *)&source, &source_len);
         data [_size] = 0;
 
         sat_status_set (&status, true, "");
