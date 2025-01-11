@@ -149,6 +149,32 @@ sat_status_t sat_sdl_set_image (sat_sdl_t *object, const char *name, sat_sdl_rec
     return status;
 }
 
+sat_status_t sat_sdl_get_image_rectangle_in_position (sat_sdl_t *object, const char *name, sat_sdl_coordinate_t coordinate, sat_sdl_rectangle_t *rectangle)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl get image rectangle in position error");
+
+    if (object != NULL && object->initialized == true && name != NULL && rectangle != NULL)
+    {
+        for (uint8_t i = 0; i < object->textures.amount; i++)
+        {
+            if (strcmp (object->textures.list [i].name, name) == 0)
+            {
+                rectangle->coordinate = coordinate;
+
+                sat_sdl_texture_get_dimension (&object->textures.list [i], &rectangle->dimension);
+
+                // sat_sdl_render_set_texture (&object->render, object->textures.list [i].handle, rectangle);
+
+                sat_status_set (&status, true, "");
+
+                break;
+            }
+        }
+    }
+
+    return status;
+}
+
 sat_status_t sat_sdl_image_add (sat_sdl_t *object, char *name, const char *file, sat_sdl_image_type_t type)
 {
     sat_status_t status = sat_status_set (&status, false, "sat sdl image add error");
@@ -587,6 +613,20 @@ sat_status_t sat_sdl_audio_control (sat_sdl_t *object, char *name, sat_sdl_audio
                 sat_status_set (&status, true, "");
             }
         }
+    }
+
+    return status;
+}
+
+sat_status_t sat_sdl_delay (sat_sdl_t *object, uint32_t delay)
+{
+    sat_status_t status = sat_status_set (&status, false, "sat sdl delay error");
+
+    if (object != NULL && object->initialized == true)
+    {
+        SDL_Delay (delay);
+
+        sat_status_set (&status, true, "");
     }
 
     return status;

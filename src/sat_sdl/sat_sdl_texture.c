@@ -21,3 +21,9 @@ void sat_sdl_texture_destroy (sat_sdl_texture_t *object)
 {
     SDL_DestroyTexture (object->handle);
 }
+
+void sat_sdl_texture_get_dimension (sat_sdl_texture_t *object, sat_sdl_dimension_t *dimension)
+{
+    dimension->height = object->dimension.height;
+    dimension->width = object->dimension.width;
+}

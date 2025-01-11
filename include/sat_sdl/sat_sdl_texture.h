@@ -20,5 +20,6 @@ typedef struct
 
 sat_status_t sat_sdl_texture_create (sat_sdl_texture_t *object, sat_sdl_render_t *render, sat_sdl_image_t *image);
 void sat_sdl_texture_destroy (sat_sdl_texture_t *object);
+void sat_sdl_texture_get_dimension (sat_sdl_texture_t *object, sat_sdl_dimension_t *dimension);
 
 #endif/* SAT_SDL_TEXTURE_H_ */

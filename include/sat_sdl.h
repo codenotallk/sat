@@ -9,6 +9,7 @@ typedef struct sat_sdl_t sat_sdl_t;
 sat_status_t sat_sdl_init (sat_sdl_t **object, const char *title, uint16_t width, uint16_t height);
 sat_status_t sat_sdl_set_background (sat_sdl_t *object, sat_sdl_color_t color);
 sat_status_t sat_sdl_set_image (sat_sdl_t *object, const char *name, sat_sdl_rectangle_t rectangle);
+sat_status_t sat_sdl_get_image_rectangle_in_position (sat_sdl_t *object, const char *name, sat_sdl_coordinate_t coordinate, sat_sdl_rectangle_t *rectangle);
 sat_status_t sat_sdl_image_add (sat_sdl_t *object, char *name, const char *file, sat_sdl_image_type_t type);
 sat_status_t sat_sdl_font_add (sat_sdl_t *object, char *name, const char *file, uint16_t size);
 sat_status_t sat_sdl_set_text (sat_sdl_t *object, char *font, char *text, sat_sdl_rectangle_t rectangle);
@@ -29,6 +30,8 @@ sat_status_t sat_sdl_stop (sat_sdl_t *object);
 sat_status_t sat_sdl_close (sat_sdl_t *object);
 sat_status_t sat_sdl_audio_add (sat_sdl_t *object, char *filename, char *name, sat_sdl_audio_type_t type);
 sat_status_t sat_sdl_audio_control (sat_sdl_t *object, char *name, sat_sdl_audio_control_t control);
+
+sat_status_t sat_sdl_delay (sat_sdl_t *object, uint32_t delay);
 
 sat_status_t sat_sdl_animate_add (sat_sdl_t *object, char *filename, char *name, sat_sdl_animate_properties_t properties);
 sat_status_t sat_sdl_animate_add_states (sat_sdl_t *object, char *name, char *state, sat_sdl_frame_position_t *positions, uint8_t size);
